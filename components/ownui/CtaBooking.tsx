@@ -58,12 +58,12 @@ export function CtaBooking() {
                 className="rounded-full px-8 h-12 text-base bg-transparent border-cream/40 text-cream hover:bg-cream/10 hover:border-cream"
               >
                 <a
-                  href="https://wa.me/4917700000000"
+                  href="https://wa.me/4915252609602"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <MessageCircle className="mr-2" size={18} />
-                  WhatsApp schreiben
+                  WhatsApp
                 </a>
               </Button>
             </div>
