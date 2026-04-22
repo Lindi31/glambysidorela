@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -94,13 +94,16 @@ export function Hero() {
           className="relative aspect-[4/5] max-w-md mx-auto w-full"
         >
           {/* Placeholder portrait frame — swap for Sidorelas photo */}
-          <div className="absolute inset-0 rounded-[40px] overflow-hidden bg-gradient-to-br from-nude via-rose/30 to-mauve/40 shadow-2xl">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-charcoal/40 font-display text-2xl italic px-8">
-                Hier kommt Sidorelas Portrait hin
-              </div>
-            </div>
-          </div>
+          <div className="absolute inset-0 rounded-[40px] overflow-hidden shadow-2xl bg-nude/20">
+  <Image
+    src="/hero.png"
+    alt="Sidorela Isa – Lash & Make-up Artist in Bruchsal und Jülich"
+    fill
+    priority
+    sizes="(max-width: 1024px) 90vw, 500px"
+    className="object-cover"
+  />
+</div>
 
           {/* Floating decorative cards */}
           <motion.div
