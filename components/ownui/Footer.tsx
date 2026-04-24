@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { MapPin, Mail, Phone } from "lucide-react";
-import { locations } from "./services";
+import { client } from "@/sanity/lib/client";
+import { defineQuery } from "next-sanity";
+
+const SETTINGS_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0] {
+    whatsapp, instagram,
+    locations[]{city, addressLine, hours, phone}
+  }
+`)
+
 function InstagramIcon({ size = 18 }: { size?: number }) {
   return (
     <svg
@@ -21,8 +30,19 @@ function InstagramIcon({ size = 18 }: { size?: number }) {
     </svg>
   );
 }
-export function Footer() {
+
+const DEFAULT_LOCATIONS = [
+  { city: "Bruchsal", addressLine: "Region Karlsruhe", hours: "Mo–Fr: 9:00–18:00 · Sa nach Vereinbarung", phone: null },
+  { city: "Jülich", addressLine: "Großraum Aachen / Düren", hours: "Nach Vereinbarung", phone: null },
+];
+
+export async function Footer() {
+  const settings = await client.fetch(SETTINGS_QUERY).catch(() => null);
   const year = new Date().getFullYear();
+
+  const whatsapp = settings?.whatsapp ?? "4915252609602";
+  const instagram = settings?.instagram ?? "https://instagram.com/glambysidorela";
+  const locations = settings?.locations?.length ? settings.locations : DEFAULT_LOCATIONS;
 
   return (
     <footer className="bg-charcoal text-cream/90 pt-20 pb-8">
@@ -37,7 +57,7 @@ export function Footer() {
           </p>
           <div className="mt-6 flex gap-4">
             <a
-              href="https://instagram.com/glambysidorela"
+              href={instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 rounded-full bg-cream/10 hover:bg-rose flex items-center justify-center transition-colors"
@@ -51,12 +71,12 @@ export function Footer() {
         <div>
           <h4 className="font-display text-lg text-gold mb-4">Standorte</h4>
           <ul className="space-y-3 text-sm">
-            {locations.map((loc) => (
+            {locations.map((loc: any) => (
               <li key={loc.city} className="flex gap-2">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-rose" />
                 <div>
                   <div className="text-cream">{loc.city}</div>
-                  <div className="text-cream/60 text-xs">{loc.region}</div>
+                  <div className="text-cream/60 text-xs">{loc.addressLine}</div>
                 </div>
               </li>
             ))}
@@ -78,7 +98,9 @@ export function Footer() {
             <li className="flex gap-2">
               <Phone size={16} className="mt-0.5 shrink-0 text-rose" />
               <a
-                href="https://wa.me/4917700000000"
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-rose transition-colors"
               >
                 WhatsApp

@@ -5,6 +5,8 @@ import { Header } from "@/components/ownui/Header";
 import { Hero } from "@/components/ownui/Hero";
 import { ServicesGrid } from "@/components/ownui/ServicesGrid";
 import { TestimonialsSlider } from "@/components/ownui/TestimonialsSlider";
+import { client } from "@/sanity/lib/client";
+import { defineQuery } from "next-sanity";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,7 +22,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+const TESTIMONIALS_QUERY = defineQuery(`
+  *[_type == "testimonial"] | order(_createdAt desc) [0...6] {
+    _id, name, text, rating, serviceCategory
+  }
+`)
+
+export default async function HomePage() {
+  const testimonials = await client.fetch(TESTIMONIALS_QUERY).catch(() => []);
+
   return (
     <>
       <Header />
@@ -28,7 +38,7 @@ export default function HomePage() {
         <Hero />
         <ServicesGrid />
         <AboutTeaser />
-        <TestimonialsSlider />
+        <TestimonialsSlider testimonials={testimonials} />
         <CtaBooking />
       </main>
       <Footer />

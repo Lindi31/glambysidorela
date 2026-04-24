@@ -2,9 +2,18 @@
 
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-import { testimonials } from "./services";
 
-export function TestimonialsSlider() {
+type Testimonial = {
+  _id: string;
+  name: string | null;
+  text: string | null;
+  rating: number | null;
+  serviceCategory: string | null;
+};
+
+export function TestimonialsSlider({ testimonials }: { testimonials: Testimonial[] }) {
+  if (!testimonials.length) return null;
+
   return (
     <section className="py-24 lg:py-32 bg-nude/30 relative overflow-hidden">
       <div
@@ -34,7 +43,7 @@ export function TestimonialsSlider() {
         <div className="grid gap-6 md:grid-cols-3">
           {testimonials.map((t, i) => (
             <motion.div
-              key={t.name}
+              key={t._id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -47,11 +56,13 @@ export function TestimonialsSlider() {
                 aria-hidden
               />
 
-              <div className="flex gap-1 mb-4 text-gold">
-                {Array.from({ length: t.rating }).map((_, idx) => (
-                  <Star key={idx} size={16} fill="currentColor" />
-                ))}
-              </div>
+              {t.rating && (
+                <div className="flex gap-1 mb-4 text-gold" aria-label={`${t.rating} von 5 Sternen`}>
+                  {Array.from({ length: t.rating }).map((_, idx) => (
+                    <Star key={idx} size={16} fill="currentColor" aria-hidden />
+                  ))}
+                </div>
+              )}
 
               <p className="text-charcoal/80 leading-relaxed mb-6 italic">
                 „{t.text}"
@@ -59,7 +70,9 @@ export function TestimonialsSlider() {
 
               <div className="pt-4 border-t border-nude/60">
                 <div className="font-medium text-charcoal">{t.name}</div>
-                <div className="text-xs text-charcoal/50">{t.service}</div>
+                {t.serviceCategory && (
+                  <div className="text-xs text-charcoal/50">{t.serviceCategory}</div>
+                )}
               </div>
             </motion.div>
           ))}
