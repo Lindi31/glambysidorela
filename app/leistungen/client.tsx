@@ -41,7 +41,7 @@ export function LeistungenGrid({ services }: { services: any[] }) {
           transition={{ duration: 0.7 }}
           className="max-w-2xl mb-16"
         >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold mb-4">— Leistungen</div>
+          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Leistungen</div>
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
             Alles für deinen <span className="italic text-rose">Glow.</span>
           </h1>
@@ -53,8 +53,7 @@ export function LeistungenGrid({ services }: { services: any[] }) {
 
         {services.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-charcoal/40 text-lg">Noch keine Leistungen eingetragen.</p>
-            <p className="text-charcoal/30 text-sm mt-2">Füge Leistungen im Sanity Studio hinzu.</p>
+            <p className="text-charcoal/40 text-lg">Noch keine Leistungen verfügbar.</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -96,7 +95,7 @@ export function LeistungenGrid({ services }: { services: any[] }) {
                         </div>
                       )}
 
-                      <div className="text-xs tracking-wider uppercase text-gold mb-2">
+                      <div className="text-xs tracking-wider uppercase text-gold-accent mb-2">
                         {categoryLabels[service.category] ?? service.category}
                       </div>
                       <h2 className="font-display text-2xl text-charcoal mb-3">{service.title}</h2>

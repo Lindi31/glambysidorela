@@ -28,16 +28,35 @@ const TESTIMONIALS_QUERY = defineQuery(`
   }
 `)
 
+const SERVICES_QUERY = defineQuery(`
+  *[_type == "service"] | order(order asc) {
+    _id, title, "slug": slug.current, category, shortDescription, priceFrom, image
+  }
+`)
+
+const SETTINGS_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0] { clientCount }
+`)
+
+const ABOUT_QUERY = defineQuery(`
+  *[_type == "aboutPage"][0] { heroImage }
+`)
+
 export default async function HomePage() {
-  const testimonials = await client.fetch(TESTIMONIALS_QUERY).catch(() => []);
+  const [testimonials, services, settings, about] = await Promise.all([
+    client.fetch(TESTIMONIALS_QUERY).catch(() => []),
+    client.fetch(SERVICES_QUERY).catch(() => []),
+    client.fetch(SETTINGS_QUERY).catch(() => null),
+    client.fetch(ABOUT_QUERY).catch(() => null),
+  ]);
 
   return (
     <>
       <Header />
       <main>
-        <Hero />
-        <ServicesGrid />
-        <AboutTeaser />
+        <Hero clientCount={settings?.clientCount ?? null} />
+        <ServicesGrid services={services} />
+        <AboutTeaser heroImage={about?.heroImage ?? null} />
         <TestimonialsSlider testimonials={testimonials} />
         <CtaBooking />
       </main>

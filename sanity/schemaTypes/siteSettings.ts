@@ -16,5 +16,6 @@ export default defineType({
     defineField({ name: 'instagram', type: 'url' }),
     defineField({ name: 'tiktok', type: 'url' }),
     defineField({ name: 'whatsapp', type: 'string', description: 'Nummer inkl. Ländercode, ohne +' }),
+    defineField({ name: 'clientCount', title: 'Anzahl zufriedener Kundinnen', type: 'number' }),
   ],
 })

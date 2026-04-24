@@ -3,29 +3,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, MapPin } from "lucide-react";
+import { Sparkles, MapPin, ChevronDown } from "lucide-react";
 
-export function Hero() {
+type Props = {
+  clientCount?: number | null;
+};
+
+export function Hero({ clientCount }: Props) {
+  const count = clientCount ? `${clientCount}+` : "500+";
+
   return (
     <section className="relative min-h-[100svh] pt-20 overflow-hidden bg-cream">
-      {/* Decorative Gradient Blobs */}
       <div
         className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-60 blur-3xl pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(212,165,165,0.4) 0%, rgba(232,213,196,0.1) 70%)",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(212,165,165,0.4) 0%, rgba(232,213,196,0.1) 70%)" }}
       />
       <div
         className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-50 blur-3xl pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(201,169,110,0.3) 0%, rgba(250,247,242,0) 70%)",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(201,169,110,0.3) 0%, rgba(250,247,242,0) 70%)" }}
       />
 
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10 pt-16 lg:pt-24 pb-16 grid lg:grid-cols-2 gap-16 items-center">
-        {/* Text Side */}
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-10 pt-16 lg:pt-24 pb-24 grid lg:grid-cols-2 gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,11 +54,7 @@ export function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2">
-            <Button
-              asChild
-              size="lg"
-              className="bg-rose hover:bg-mauve text-cream rounded-full px-8 h-12 text-base"
-            >
+            <Button asChild size="lg" className="bg-rose hover:bg-mauve text-cream rounded-full px-8 h-12 text-base">
               <Link href="/termin">Jetzt Termin buchen</Link>
             </Button>
             <Button
@@ -86,26 +80,23 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Visual Side */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="relative aspect-[4/5] max-w-md mx-auto w-full"
         >
-          {/* Placeholder portrait frame — swap for Sidorelas photo */}
           <div className="absolute inset-0 rounded-[40px] overflow-hidden shadow-2xl bg-nude/20">
-  <Image
-    src="/hero.png"
-    alt="Sidorela Isa – Lash & Make-up Artist in Bruchsal und Jülich"
-    fill
-    priority
-    sizes="(max-width: 1024px) 90vw, 500px"
-    className="object-cover"
-  />
-</div>
+            <Image
+              src="/hero.png"
+              alt="Sidorela Isa – Lash & Make-up Artist in Bruchsal und Jülich"
+              fill
+              priority
+              sizes="(max-width: 1024px) 90vw, 500px"
+              className="object-cover"
+            />
+          </div>
 
-          {/* Floating decorative cards */}
           <motion.div
             initial={{ opacity: 0, x: -20, y: 20 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
@@ -113,15 +104,9 @@ export function Hero() {
             className="absolute -bottom-6 -left-6 bg-cream rounded-2xl p-4 shadow-xl border border-nude/40 max-w-[180px]"
           >
             <div className="flex items-center gap-1 text-gold mb-2">
-              {"★★★★★".split("").map((_, i) => (
-                <span key={i} className="text-sm">
-                  ★
-                </span>
-              ))}
+              {[...Array(5)].map((_, i) => <span key={i} className="text-sm">★</span>)}
             </div>
-            <div className="text-xs text-charcoal/70 italic">
-              „Einfach traumhaft, komme immer wieder!"
-            </div>
+            <div className="text-xs text-charcoal/70 italic">„Einfach traumhaft, komme immer wieder!"</div>
             <div className="text-xs text-charcoal/50 mt-1">— Elena M.</div>
           </motion.div>
 
@@ -131,11 +116,28 @@ export function Hero() {
             transition={{ delay: 1, duration: 0.6 }}
             className="absolute -top-4 -right-4 bg-rose text-cream rounded-2xl px-5 py-3 shadow-xl"
           >
-            <div className="font-display text-2xl">500+</div>
+            <div className="font-display text-2xl">{count}</div>
             <div className="text-xs opacity-90">zufriedene Kundinnen</div>
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-charcoal/30"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.6 }}
+        aria-hidden
+      >
+        <span className="text-xs tracking-widest uppercase">Entdecken</span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+        >
+          <ChevronDown size={20} />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

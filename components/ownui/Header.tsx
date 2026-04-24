@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ const navLinks = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -32,13 +33,13 @@ export function Header() {
     return () => document.removeEventListener("keydown", handler);
   }, [open]);
 
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-md border-b border-nude/40">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 h-20 flex items-center justify-between">
-        <Link
-          href="/"
-          className="font-display text-2xl tracking-wide text-charcoal"
-        >
+        <Link href="/" className="font-display text-2xl tracking-wide text-charcoal">
           Glam<span className="text-rose">By</span>Sidorela
         </Link>
 
@@ -47,7 +48,13 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-charcoal/80 hover:text-rose transition-colors"
+              className={cn(
+                "text-sm transition-colors relative pb-0.5",
+                isActive(link.href)
+                  ? "text-rose font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-rose"
+                  : "text-charcoal/80 hover:text-rose"
+              )}
+              aria-current={isActive(link.href) ? "page" : undefined}
             >
               {link.label}
             </Link>
@@ -55,10 +62,7 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <Button
-            asChild
-            className="bg-rose hover:bg-mauve text-cream rounded-full px-6"
-          >
+          <Button asChild className="bg-rose hover:bg-mauve text-cream rounded-full px-6">
             <Link href="/termin">Termin buchen</Link>
           </Button>
         </div>
@@ -92,18 +96,17 @@ export function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="text-charcoal/90 hover:text-rose text-lg"
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={cn(
+                "text-lg transition-colors",
+                isActive(link.href) ? "text-rose font-medium" : "text-charcoal/90 hover:text-rose"
+              )}
             >
               {link.label}
             </Link>
           ))}
-          <Button
-            asChild
-            className="bg-rose hover:bg-mauve text-cream rounded-full mt-2"
-          >
-            <Link href="/termin" onClick={() => setOpen(false)}>
-              Termin buchen
-            </Link>
+          <Button asChild className="bg-rose hover:bg-mauve text-cream rounded-full mt-2">
+            <Link href="/termin" onClick={() => setOpen(false)}>Termin buchen</Link>
           </Button>
         </nav>
       </div>

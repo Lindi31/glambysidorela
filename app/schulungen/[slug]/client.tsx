@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { ArrowLeft, CheckCircle2, Clock, Calendar, MapPin, Users } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Clock, Calendar, MapPin, Users, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PortableText } from "@portabletext/react"
 import { urlFor } from "@/sanity/lib/image"
@@ -33,12 +33,13 @@ export function TrainingDetail({ training }: { training: any }) {
             </div>
             <div className="relative mx-auto max-w-7xl px-6 lg:px-10 w-full">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-                <Link
-                  href="/schulungen"
-                  className="inline-flex items-center gap-2 text-cream/70 hover:text-cream text-sm mb-6 transition-colors"
-                >
-                  <ArrowLeft size={16} /> Alle Schulungen
-                </Link>
+                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-cream/60 text-xs mb-6">
+                  <Link href="/" className="hover:text-cream transition-colors">Home</Link>
+                  <ChevronRight size={12} />
+                  <Link href="/schulungen" className="hover:text-cream transition-colors">Schulungen</Link>
+                  <ChevronRight size={12} />
+                  <span className="text-cream/90">{training.title}</span>
+                </nav>
                 {training.level && (
                   <div className="inline-block text-xs tracking-wider uppercase px-3 py-1 rounded-full bg-rose/30 text-cream border border-rose/40 mb-4">
                     {training.level}
@@ -64,6 +65,13 @@ export function TrainingDetail({ training }: { training: any }) {
         ) : (
           <div className="mx-auto max-w-7xl px-6 lg:px-10 w-full pt-32">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-charcoal/50 text-xs mb-6">
+                <Link href="/" className="hover:text-charcoal transition-colors">Home</Link>
+                <ChevronRight size={12} />
+                <Link href="/schulungen" className="hover:text-charcoal transition-colors">Schulungen</Link>
+                <ChevronRight size={12} />
+                <span className="text-charcoal/80">{training.title}</span>
+              </nav>
               <Link
                 href="/schulungen"
                 className="inline-flex items-center gap-2 text-charcoal/50 hover:text-charcoal text-sm mb-6 transition-colors"

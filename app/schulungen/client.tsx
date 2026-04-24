@@ -31,7 +31,7 @@ export function SchulungenGrid({ trainings }: { trainings: any[] }) {
           transition={{ duration: 0.7 }}
           className="max-w-2xl mb-16"
         >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold mb-4">— Schulungen</div>
+          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Schulungen</div>
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
             Lern von der <span className="italic text-rose">Expertin.</span>
           </h1>
@@ -43,8 +43,7 @@ export function SchulungenGrid({ trainings }: { trainings: any[] }) {
 
         {trainings.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-charcoal/40 text-lg">Noch keine Schulungen eingetragen.</p>
-            <p className="text-charcoal/30 text-sm mt-2">Füge Schulungen im Sanity Studio hinzu.</p>
+            <p className="text-charcoal/40 text-lg">Noch keine Schulungen verfügbar.</p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
