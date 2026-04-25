@@ -27,7 +27,7 @@ export function AboutTeaser({ heroImage }: Props) {
           transition={{ duration: 0.8 }}
           className="relative"
         >
-          <div className="relative aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl bg-gradient-to-tl from-mauve via-rose/40 to-nude">
+          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-tl from-mauve via-rose/40 to-nude">
             {heroImage ? (
               <Image
                 src={urlFor(heroImage).width(700).height(875).url()}

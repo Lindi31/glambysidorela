@@ -86,7 +86,7 @@ export function Hero({ clientCount }: Props) {
           transition={{ duration: 1, delay: 0.2 }}
           className="relative aspect-[4/5] max-w-md mx-auto w-full"
         >
-          <div className="absolute inset-0 rounded-[40px] overflow-hidden shadow-2xl bg-nude/20">
+          <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl bg-nude/20">
             <Image
               src="/hero.png"
               alt="Sidorela Isa – Lash & Make-up Artist in Bruchsal und Jülich"
@@ -98,26 +98,25 @@ export function Hero({ clientCount }: Props) {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: -20, y: 20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="absolute -bottom-6 -left-6 bg-cream rounded-2xl p-4 shadow-xl border border-nude/40 max-w-[180px]"
+            className="absolute -bottom-8 -left-4 bg-cream rounded-2xl px-5 py-4 shadow-xl border border-nude/40 max-w-[200px]"
           >
-            <div className="flex items-center gap-1 text-gold mb-2">
-              {[...Array(5)].map((_, i) => <span key={i} className="text-sm">★</span>)}
+            <div className="flex items-center gap-0.5 text-gold mb-2">
+              {[...Array(5)].map((_, i) => <span key={i} className="text-xs">★</span>)}
             </div>
-            <div className="text-xs text-charcoal/70 italic">„Einfach traumhaft, komme immer wieder!"</div>
-            <div className="text-xs text-charcoal/50 mt-1">— Elena M.</div>
+            <div className="text-xs text-charcoal/70 italic leading-relaxed">„Einfach traumhaft, komme immer wieder!"</div>
+            <div className="text-xs text-charcoal/40 mt-1.5 font-medium">Elena M.</div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20, y: -20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1, duration: 0.6 }}
-            className="absolute -top-4 -right-4 bg-rose text-cream rounded-2xl px-5 py-3 shadow-xl"
+            className="absolute -top-3 -right-3 bg-rose text-cream rounded-xl px-4 py-2 shadow-lg"
           >
-            <div className="font-display text-2xl">{count}</div>
-            <div className="text-xs opacity-90">zufriedene Kundinnen</div>
+            <div className="text-xs font-medium opacity-90">{count} Kundinnen</div>
           </motion.div>
         </motion.div>
       </div>

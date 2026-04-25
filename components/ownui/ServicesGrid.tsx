@@ -36,7 +36,7 @@ function ServiceCard({ service, index }: { service: SanityService; index: number
     >
       <Link
         href={`/leistungen/${service.slug}`}
-        className="group relative flex flex-col h-full rounded-3xl bg-cream border border-nude/60 hover:border-rose/60 hover:shadow-xl transition-all duration-300 overflow-hidden"
+        className="group relative flex flex-col h-full rounded-2xl bg-cream border border-nude/60 shadow-sm hover:border-rose/60 hover:shadow-lg transition-all duration-300 overflow-hidden"
       >
         {service.image && (
           <div className="w-full aspect-[3/2] overflow-hidden bg-nude/20 shrink-0">
@@ -79,7 +79,7 @@ function ServiceCard({ service, index }: { service: SanityService; index: number
 
 export function ServicesGrid({ services }: { services: SanityService[] }) {
   return (
-    <section className="py-24 lg:py-32 bg-gradient-to-b from-cream to-nude/20">
+    <section className="pt-12 pb-24 lg:pt-16 lg:pb-32 bg-gradient-to-b from-cream to-nude/20">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

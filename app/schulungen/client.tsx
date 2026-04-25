@@ -14,17 +14,9 @@ const levelColors: Record<string, string> = {
 
 export function SchulungenGrid({ trainings }: { trainings: any[] }) {
   return (
-    <section className="relative min-h-screen pt-32 pb-24 bg-cream overflow-hidden">
-      <div
-        className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-40 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(212,165,165,0.4) 0%, rgba(232,213,196,0.1) 70%)" }}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full opacity-30 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(201,169,110,0.3) 0%, rgba(250,247,242,0) 70%)" }}
-      />
+    <section className="min-h-screen pt-32 pb-24 bg-cream">
 
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -57,7 +49,7 @@ export function SchulungenGrid({ trainings }: { trainings: any[] }) {
               >
                 <Link
                   href={`/schulungen/${training.slug}`}
-                  className="group relative flex flex-col h-full rounded-3xl bg-white border border-nude/60 hover:border-rose/60 hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="group relative flex flex-col h-full rounded-2xl bg-white border border-nude/60 shadow-sm hover:border-rose/60 hover:shadow-lg transition-all duration-300 overflow-hidden"
                 >
                   {training.image && (
                     <div className="w-full aspect-[3/2] overflow-hidden bg-nude/20 shrink-0">

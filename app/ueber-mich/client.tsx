@@ -14,17 +14,9 @@ export function UeberMichView({ about }: { about: any }) {
   return (
     <div className="relative bg-cream overflow-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-40 blur-3xl pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(212,165,165,0.4) 0%, rgba(232,213,196,0.1) 70%)" }}
-        />
-        <div
-          className="absolute -bottom-20 -left-40 w-[500px] h-[500px] rounded-full opacity-30 blur-3xl pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(201,169,110,0.3) 0%, rgba(250,247,242,0) 70%)" }}
-        />
+      <section className="pt-32 pb-20">
 
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-2 gap-16 items-center">
           {/* Text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -84,7 +76,7 @@ export function UeberMichView({ about }: { about: any }) {
             transition={{ duration: 1, delay: 0.2 }}
             className="relative aspect-[4/5] max-w-md mx-auto w-full"
           >
-            <div className="absolute inset-0 rounded-[40px] overflow-hidden shadow-2xl bg-nude/20">
+            <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl bg-nude/20">
               {about?.heroImage ? (
                 <Image
                   src={urlFor(about.heroImage).width(800).height(1000).url()}

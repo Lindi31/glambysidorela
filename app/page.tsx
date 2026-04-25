@@ -5,7 +5,7 @@ import { Header } from "@/components/ownui/Header";
 import { Hero } from "@/components/ownui/Hero";
 import { ServicesGrid } from "@/components/ownui/ServicesGrid";
 import { TestimonialsSlider } from "@/components/ownui/TestimonialsSlider";
-import { client } from "@/sanity/lib/client";
+import { sanityFetch } from "@/sanity/lib/live";
 import { defineQuery } from "next-sanity";
 import type { Metadata } from "next";
 
@@ -43,11 +43,16 @@ const ABOUT_QUERY = defineQuery(`
 `)
 
 export default async function HomePage() {
-  const [testimonials, services, settings, about] = await Promise.all([
-    client.fetch(TESTIMONIALS_QUERY).catch(() => []),
-    client.fetch(SERVICES_QUERY).catch(() => []),
-    client.fetch(SETTINGS_QUERY).catch(() => null),
-    client.fetch(ABOUT_QUERY).catch(() => null),
+  const [
+    { data: testimonials },
+    { data: services },
+    { data: settings },
+    { data: about },
+  ] = await Promise.all([
+    sanityFetch({ query: TESTIMONIALS_QUERY }),
+    sanityFetch({ query: SERVICES_QUERY }),
+    sanityFetch({ query: SETTINGS_QUERY }),
+    sanityFetch({ query: ABOUT_QUERY }),
   ]);
 
   return (

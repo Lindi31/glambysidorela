@@ -78,7 +78,7 @@ export async function Footer() {
         </div>
 
         <div>
-          <h4 className="font-display text-lg text-gold mb-4">Standorte</h4>
+          <h4 className="font-display text-lg text-cream/90 mb-4">Standorte</h4>
           <ul className="space-y-3 text-sm">
             {locations.map((loc: any) => (
               <li key={loc.city} className="flex gap-2">
@@ -93,7 +93,7 @@ export async function Footer() {
         </div>
 
         <div>
-          <h4 className="font-display text-lg text-gold mb-4">Kontakt</h4>
+          <h4 className="font-display text-lg text-cream/90 mb-4">Kontakt</h4>
           <ul className="space-y-3 text-sm">
             <li className="flex gap-2">
               <Mail size={16} className="mt-0.5 shrink-0 text-rose" />

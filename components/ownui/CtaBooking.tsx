@@ -14,7 +14,7 @@ export function CtaBooking() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7 }}
-          className="relative overflow-hidden rounded-[48px] bg-gradient-to-br from-rose via-mauve to-charcoal px-8 py-20 lg:p-24 text-center"
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose via-mauve to-charcoal px-8 py-20 lg:p-24 text-center"
         >
           {/* Decorative elements */}
           <div
