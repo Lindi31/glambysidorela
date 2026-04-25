@@ -11,7 +11,7 @@ import { TrainingDetail } from "./client"
 const TRAINING_QUERY = defineQuery(`
   *[_type == "training" && slug.current == $slug][0] {
     _id, title, "slug": slug.current, level, description, durationDays, price,
-    includes, upcomingDates[]{date, location, spotsLeft}, image, seoTitle, seoDescription
+    includes, upcomingDates[]{date, location, spotsLeft}, "image": image{ ..., asset }, seoTitle, seoDescription
   }
 `)
 

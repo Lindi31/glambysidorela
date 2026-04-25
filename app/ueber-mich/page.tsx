@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const ABOUT_QUERY = defineQuery(`
   *[_type == "about"][0] {
-    _id, heroImage, headline, story, certifications, yearsExperience
+    _id, "heroImage": heroImage{ ..., asset }, headline, story, certifications, yearsExperience
   }
 `)
 

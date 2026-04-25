@@ -128,7 +128,7 @@ export function ServiceDetail({ service }: { service: any }) {
             <div>
               <h2 className="font-display text-3xl text-charcoal mb-8">Galerie</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {service.gallery.map((img: any, i: number) => (
+                {service.gallery.filter((img: any) => img?.asset?._ref).map((img: any, i: number) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, scale: 0.95 }}

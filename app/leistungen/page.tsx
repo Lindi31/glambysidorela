@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const SERVICES_QUERY = defineQuery(`
   *[_type == "service"] | order(order asc) {
-    _id, title, "slug": slug.current, category, shortDescription, priceFrom, duration, image
+    _id, title, "slug": slug.current, category, shortDescription, priceFrom, duration, "image": image{ ..., asset }
   }
 `)
 

@@ -30,7 +30,7 @@ const TESTIMONIALS_QUERY = defineQuery(`
 
 const SERVICES_QUERY = defineQuery(`
   *[_type == "service"] | order(order asc) {
-    _id, title, "slug": slug.current, category, shortDescription, priceFrom, image
+    _id, title, "slug": slug.current, category, shortDescription, priceFrom, "image": image{ ..., asset }
   }
 `)
 
@@ -39,7 +39,7 @@ const SETTINGS_QUERY = defineQuery(`
 `)
 
 const ABOUT_QUERY = defineQuery(`
-  *[_type == "aboutPage"][0] { heroImage }
+  *[_type == "aboutPage"][0] { "heroImage": heroImage{ ..., asset } }
 `)
 
 export default async function HomePage() {

@@ -11,7 +11,7 @@ import { ServiceDetail } from "./client"
 const SERVICE_QUERY = defineQuery(`
   *[_type == "service" && slug.current == $slug][0] {
     _id, title, "slug": slug.current, category, shortDescription, description,
-    priceFrom, duration, image, gallery, calcomEventType, seoTitle, seoDescription
+    priceFrom, duration, "image": image{ ..., asset }, "gallery": gallery[]{ ..., asset }, calcomEventType, seoTitle, seoDescription
   }
 `)
 

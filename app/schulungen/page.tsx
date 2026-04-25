@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const TRAININGS_QUERY = defineQuery(`
   *[_type == "training"] | order(title asc) {
-    _id, title, "slug": slug.current, level, durationDays, price, image,
+    _id, title, "slug": slug.current, level, durationDays, price, "image": image{ ..., asset },
     "upcomingDates": upcomingDates[]{date, location, spotsLeft}
   }
 `)

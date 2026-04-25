@@ -14,7 +14,9 @@ export const metadata: Metadata = {
 
 const GALLERY_QUERY = defineQuery(`
   *[_type == "galleryItem" && consent == true] | order(_createdAt desc) {
-    _id, title, category, before, after
+    _id, title, category,
+    "before": before{ ..., asset },
+    "after": after{ ..., asset }
   }
 `)
 

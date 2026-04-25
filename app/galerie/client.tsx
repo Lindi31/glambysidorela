@@ -97,7 +97,7 @@ function Lightbox({
           className="max-w-4xl w-full"
           onClick={(e) => e.stopPropagation()}
         >
-          {item.before && item.after ? (
+          {item.before?.asset?._ref && item.after?.asset?._ref ? (
             <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden">
               <div className="relative aspect-square">
                 <Image
@@ -122,7 +122,7 @@ function Lightbox({
                 </div>
               </div>
             </div>
-          ) : item.after ? (
+          ) : item.after?.asset?._ref ? (
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
               <Image
                 src={urlFor(item.after).width(1200).height(900).url()}
@@ -226,7 +226,7 @@ export function GalerieGrid({ items }: { items: GalleryItem[] }) {
                   className="rounded-2xl bg-white border border-nude/60 shadow-sm overflow-hidden cursor-pointer group hover:border-rose/40 hover:shadow-lg transition-all duration-300"
                   onClick={() => setLightboxIndex(filtered.indexOf(item))}
                 >
-                  {item.before && item.after ? (
+                  {item.before?.asset?._ref && item.after?.asset?._ref ? (
                     <div className="grid grid-cols-2 gap-0">
                       <div className="relative aspect-square bg-nude/20">
                         <Image
@@ -251,7 +251,7 @@ export function GalerieGrid({ items }: { items: GalleryItem[] }) {
                         </div>
                       </div>
                     </div>
-                  ) : item.after ? (
+                  ) : item.after?.asset?._ref ? (
                     <div className="relative aspect-[4/3] bg-nude/20">
                       <Image
                         src={urlFor(item.after).width(600).height(450).url()}
