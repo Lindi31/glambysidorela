@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { motion } from "framer-motion"
-import { MapPin, Mail, Phone, Clock, CheckCircle2, AlertCircle } from "lucide-react"
+import { MapPin, Mail, Phone, Clock, CheckCircle2, AlertCircle, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const schema = z.object({
@@ -281,6 +281,15 @@ export function KontaktView({ settings }: { settings: any }) {
                           {loc.phone}
                         </a>
                       )}
+                      <a
+                        href={`https://maps.google.com/?q=GlamBySidorela+${encodeURIComponent(loc.city)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 mt-3 text-xs text-charcoal/50 hover:text-rose transition-colors"
+                      >
+                        <ExternalLink size={11} />
+                        Auf Google Maps öffnen
+                      </a>
                     </div>
                   </div>
                 </motion.div>

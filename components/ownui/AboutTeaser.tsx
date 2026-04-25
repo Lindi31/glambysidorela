@@ -60,18 +60,12 @@ export function AboutTeaser({ heroImage }: Props) {
             Schönheit ist für mich <span className="italic text-rose">Handwerk</span>,
             Detail und Leidenschaft.
           </h2>
-          <div className="space-y-4 text-charcoal/70 text-lg leading-relaxed">
-            <p>
-              Mein Name ist Sidorela Isa. Seit mehreren Jahren begleite ich
-              Kundinnen auf ihrem Weg zum perfekten Look – ob als zarte
-              Wimpernverlängerung für den Alltag, präzises Microblading oder
-              strahlendes Braut-Make-up.
-            </p>
-            <p>
-              Was mich antreibt: das Gefühl, wenn eine Kundin den Spiegel sieht
-              und lächelt. Genau dieses Handwerk gebe ich in meinen Schulungen weiter.
-            </p>
-          </div>
+          <p className="text-charcoal/70 text-lg leading-relaxed">
+            Mein Name ist Sidorela Isa. Seit mehreren Jahren begleite ich
+            Kundinnen auf ihrem Weg zum perfekten Look – ob als zarte
+            Wimpernverlängerung für den Alltag, präzises Microblading oder
+            strahlendes Braut-Make-up.
+          </p>
           <ul className="mt-8 grid sm:grid-cols-2 gap-3">
             {highlights.map((h) => (
               <li key={h} className="flex items-start gap-2 text-sm text-charcoal/80">

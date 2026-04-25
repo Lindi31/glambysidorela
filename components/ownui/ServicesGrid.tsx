@@ -25,7 +25,7 @@ type SanityService = {
   image?: any;
 };
 
-function ServiceCard({ service, index }: { service: SanityService; index: number }) {
+function ServiceCard({ service, index, priority }: { service: SanityService; index: number; priority?: boolean }) {
   const Icon = iconMap[service.category] ?? Sparkles;
   return (
     <motion.div
@@ -45,6 +45,7 @@ function ServiceCard({ service, index }: { service: SanityService; index: number
               alt={service.title}
               width={600}
               height={400}
+              priority={priority}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           </div>
@@ -99,7 +100,7 @@ export function ServicesGrid({ services }: { services: SanityService[] }) {
         </motion.div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
-            <ServiceCard key={service._id} service={service} index={i} />
+            <ServiceCard key={service._id} service={service} index={i} priority={i === 0} />
           ))}
         </div>
       </div>

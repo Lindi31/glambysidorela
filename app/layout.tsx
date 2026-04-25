@@ -3,6 +3,7 @@ import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { SanityLive } from "@/sanity/lib/live";
+import { WhatsAppFloat } from "@/components/ownui/WhatsAppFloat";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -75,6 +76,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Providers>{children}</Providers>
+        <WhatsAppFloat />
         <SanityLive />
       </body>
     </html>

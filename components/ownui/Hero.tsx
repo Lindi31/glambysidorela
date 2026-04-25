@@ -97,33 +97,37 @@ export function Hero({ clientCount }: Props) {
             />
           </div>
 
+          {/* 5-Sterne Review Card */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20, y: 20 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="absolute -bottom-8 -left-4 bg-cream rounded-2xl px-5 py-4 shadow-xl border border-nude/40 max-w-[200px]"
+            className="absolute -bottom-8 -left-6 bg-cream rounded-2xl p-5 shadow-2xl border border-nude/40 max-w-[210px]"
           >
             <div className="flex items-center gap-0.5 text-gold mb-2">
-              {[...Array(5)].map((_, i) => <span key={i} className="text-xs">★</span>)}
+              {[...Array(5)].map((_, i) => <span key={i} className="text-sm">★</span>)}
+              <span className="ml-1.5 text-xs font-semibold text-charcoal">5.0</span>
             </div>
-            <div className="text-xs text-charcoal/70 italic leading-relaxed">„Einfach traumhaft, komme immer wieder!"</div>
-            <div className="text-xs text-charcoal/40 mt-1.5 font-medium">Elena M.</div>
+            <div className="text-xs text-charcoal/75 italic leading-relaxed">„Einfach traumhaft, komme immer wieder!"</div>
+            <div className="text-xs text-charcoal/50 mt-2 font-medium tracking-wide">— Elena M.</div>
           </motion.div>
 
+          {/* Kunden-Zähler */}
           <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 20, y: -20 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ delay: 1, duration: 0.6 }}
-            className="absolute -top-3 -right-3 bg-rose text-cream rounded-xl px-4 py-2 shadow-lg"
+            className="absolute -top-5 -right-5 bg-rose text-cream rounded-2xl px-5 py-3.5 shadow-2xl"
           >
-            <div className="text-xs font-medium opacity-90">{count} Kundinnen</div>
+            <div className="font-display text-3xl leading-none">{count}</div>
+            <div className="text-xs opacity-85 mt-0.5">zufriedene Kundinnen</div>
           </motion.div>
         </motion.div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-charcoal/30"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-charcoal/50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 0.6 }}

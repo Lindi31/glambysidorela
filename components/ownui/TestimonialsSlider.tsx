@@ -32,7 +32,7 @@ export function TestimonialsSlider({ testimonials }: { testimonials: Testimonial
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto mb-16"
         >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold mb-4">
+          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">
             — Stimmen meiner Kundinnen
           </div>
           <h2 className="font-display text-4xl md:text-5xl text-charcoal leading-tight">
