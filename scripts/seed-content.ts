@@ -77,7 +77,7 @@ async function main() {
         block("Mir ist wichtig, dass du dich vom ersten Gespräch an wohlfühlst. Darum nehme ich mir Zeit für deine Wünsche und stimme jede Behandlung persönlich auf dich ab."),
         block("Mein Wissen gebe ich in eigenen Schulungen an angehende Lash- und PMU-Artists weiter."),
       ],
-      certifications: ["Zertifizierte Lash-Artist", "Zertifizierte PMU-Artist", "Eigene Schulungen mit Starter-Equipment"],
+      certifications: ["Zertifizierte Lash-Artist", "Zertifizierte PMU-Artist", "Eigene Schulungen mit Starter-Equipment", "Bridal Make-up Artist seit 9 Jahren", "Official MUA für KIKO Milano"],
     }),
   )
 
@@ -85,7 +85,7 @@ async function main() {
   if (settingsId) {
     transaction.patch(settingsId, (patch) =>
       patch.set({
-        brandName: "GlamBySidorela",
+        brandName: "Sidorela Isa - Beauty Studio & Academy",
         tagline: "Deine Schönheit, perfekt inszeniert.",
         instagram: "https://www.instagram.com/sidorelaisa",
         whatsapp: "4915252609602",

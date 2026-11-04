@@ -1,8 +1,8 @@
 // Angebote der Startseite und der interaktiven Seiten.
 // "ab"-Preise bitte prüfen. Shop-Artikel sind ausdrücklich nur Beispiele.
 
-export const BERATUNG_EVENT = "beratung"; // Slug des Termintyps in Cal.com
-export const BERATUNG_HREF = `/termin?event=${BERATUNG_EVENT}`;
+export const BERATUNG_HREF = "/termin?behandlung=beratung";
+export const ERSTGESPRAECH_HREF = "/termin?behandlung=schulung-beratung";
 
 export type TreatmentId = "lashes" | "brows" | "pmu" | "makeup" | "facial";
 

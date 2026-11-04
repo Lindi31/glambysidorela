@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { fieldClass, labelClass, useRequest } from "@/components/ownui/useRequest";
 import { Pill, pillClass } from "@/components/ownui/Pill";
-import { BERATUNG_HREF } from "@/lib/offers";
+import { ERSTGESPRAECH_HREF } from "@/lib/offers";
 
-export function TrainingCalculator({ fee = 499 }: { fee?: number }) {
+export function TrainingCalculator({ fee: initialFee = 499 }: { fee?: number }) {
+  const [fee, setFee] = useState(initialFee);
+  const maxFee = Math.max(3000, initialFee);
   const [price, setPrice] = useState(89);
   const [perWeek, setPerWeek] = useState(4);
   const clients = Math.ceil(fee / price);
@@ -14,7 +16,11 @@ export function TrainingCalculator({ fee = 499 }: { fee?: number }) {
   return (
     <section className="rounded-[28px] bg-charcoal p-7 text-cream md:p-12">
       <h2 className="max-w-[14em] text-balance font-display text-[clamp(34px,4.6vw,60px)] leading-[1.02] tracking-[-0.02em]">Wann könnte sich deine Schulung lohnen?</h2>
-      <div className="mt-8 grid gap-6 md:grid-cols-2">
+      <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <label className="flex flex-col gap-2 text-[15px]">
+          <span className="flex justify-between"><span>Kursgebühr</span><strong className="font-medium">{fee} €</strong></span>
+          <input type="range" min={100} max={maxFee} step={1} value={fee} onChange={(e) => setFee(Number(e.target.value))} className="h-11 w-full accent-gold" />
+        </label>
         <label className="flex flex-col gap-2 text-[15px]">
           <span className="flex justify-between"><span>Dein Preis pro Kundin</span><strong className="font-medium">{price} €</strong></span>
           <input type="range" min={40} max={200} step={5} value={price} onChange={(e) => setPrice(Number(e.target.value))} className="h-11 w-full accent-gold" />
@@ -28,7 +34,7 @@ export function TrainingCalculator({ fee = 499 }: { fee?: number }) {
         Nach {clients} Kundinnen wäre die Kursgebühr wieder drin. Das wären etwa {weeks} {weeks === 1 ? "Woche" : "Wochen"}.
       </p>
       <p className="mt-3 text-[13px] leading-snug text-cream/75">Rechenbeispiel mit {fee} € Kursgebühr, ohne Material, Miete und Steuern. Keine Verdienstgarantie.</p>
-      <div className="mt-7"><Pill href={BERATUNG_HREF} variant="light">Kostenloses Erstgespräch</Pill></div>
+      <div className="mt-7"><Pill href={ERSTGESPRAECH_HREF} variant="light">Kostenloses Erstgespräch</Pill></div>
     </section>
   );
 }

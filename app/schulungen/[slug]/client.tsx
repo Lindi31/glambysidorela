@@ -2,7 +2,7 @@ import { PortableText, type PortableTextBlock } from "@portabletext/react"
 import { DetailHero, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
 import { Pill } from "@/components/ownui/Pill"
 import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
-import { BERATUNG_HREF } from "@/lib/offers"
+import { ERSTGESPRAECH_HREF } from "@/lib/offers"
 import { SITE, whatsappUrl } from "@/lib/site"
 
 type Training = {
@@ -72,7 +72,7 @@ export function TrainingDetail({ training }: { training: Training }) {
           <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">Platz anfragen</h2>
           {meta.length > 0 && <p className="mb-2 text-[15px] text-charcoal/75">{meta.join(", ")}</p>}
           <Pill href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für die ${training.title}.`)}>Per WhatsApp anfragen</Pill>
-          <Pill href={BERATUNG_HREF} variant="outline">Kostenloses Erstgespräch</Pill>
+          <Pill href={ERSTGESPRAECH_HREF} variant="outline">Kostenloses Erstgespräch</Pill>
           <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Schulung: ${training.title}`)}`} className="inline-flex min-h-11 items-center justify-center text-[15px] font-medium text-charcoal underline-offset-4 hover:underline">
             Per E-Mail anfragen
           </a>

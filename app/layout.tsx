@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE.name}: Lashes, Brows & Permanent Make-up in Bruchsal & Jülich`,
-    template: `%s | ${SITE.name}`,
+    template: `%s | ${SITE.shortName} Beauty Studio & Academy`,
   },
   description: SITE.description,
   applicationName: SITE.name,

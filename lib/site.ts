@@ -19,7 +19,9 @@ const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
 export const SITE = {
-  name: "GlamBySidorela",
+  // Exakt wie im Google-Unternehmensprofil, wichtig für lokales SEO.
+  name: "Sidorela Isa - Beauty Studio & Academy",
+  shortName: "Sidorela Isa",
   owner: "Sidorela Isa",
   url: SITE_URL,
   email: "kontakt@glambysidorela.de",
@@ -32,6 +34,13 @@ export const SITE = {
     "Lash-Extensions, Brows, Permanent Make-up, Make-up, Gesichtsbehandlungen und Schulungen von Sidorela Isa in Bruchsal und Jülich.",
 };
 
+// Aus Sidorelas Instagram-Profil, bitte aktuell halten.
+export const CREDENTIALS = [
+  { value: "9 Jahre", label: "Bridal Make-up" },
+  { value: "6 Jahre", label: "Lash Artist" },
+  { value: "Official MUA", label: "KIKO Milano" },
+];
+
 export const LOCATIONS: SiteLocation[] = [
   {
     slug: "bruchsal",
@@ -42,8 +51,8 @@ export const LOCATIONS: SiteLocation[] = [
     postalCode: "76646",
     hours: "Mo–Fr: 9:00–18:00, Sa nach Vereinbarung",
     nearby: ["Karlsruhe", "Bretten", "Bad Schönborn", "Forst", "Ubstadt-Weiher", "Kraichtal"],
-    mapsUrl: mapsUrl("GlamBySidorela, Spöckweg 14, 76646 Bruchsal"),
-    reviewUrl: null,
+    mapsUrl: mapsUrl("Sidorela Isa - Beauty Studio & Academy, Spöckweg 14, 76646 Bruchsal"),
+    reviewUrl: "https://www.google.com/search?q=Sidorela+Isa+-+Beauty+Studio+%26+Academy",
   },
   {
     slug: "juelich",
@@ -54,7 +63,7 @@ export const LOCATIONS: SiteLocation[] = [
     postalCode: "52428",
     hours: "Nach Vereinbarung",
     nearby: ["Aachen", "Düren", "Linnich", "Titz", "Aldenhoven", "Inden"],
-    mapsUrl: mapsUrl("GlamBySidorela, Gartenstraße 1 C, 52428 Jülich"),
+    mapsUrl: mapsUrl("Gartenstraße 1 C, 52428 Jülich"),
     reviewUrl: null,
   },
 ];

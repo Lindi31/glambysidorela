@@ -10,7 +10,7 @@ export function salonNode(location: SiteLocation) {
   return {
     "@type": "BeautySalon",
     "@id": salonId(location),
-    name: `${SITE.name} ${location.city}`,
+    name: location.slug === "bruchsal" ? SITE.name : `${SITE.name} ${location.city}`,
     url: `${SITE_URL}/standorte/${location.slug}`,
     parentOrganization: { "@id": ORGANIZATION_ID },
     description: `Lashes, Brows, Permanent Make-up, Make-up und Gesichtsbehandlungen in ${location.city}.`,
@@ -53,6 +53,7 @@ export function siteGraph() {
         name: SITE.name,
         url: SITE_URL,
         image: IMAGE,
+        logo: `${SITE_URL}/brand/sidorela-isa-profilbild.png`,
         email: SITE.email,
         telephone: SITE.phone,
         founder: { "@type": "Person", name: SITE.owner },

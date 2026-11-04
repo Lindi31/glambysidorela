@@ -35,7 +35,7 @@ const SECTIONS = [
   },
   {
     title: "Terminbuchung",
-    text: "Für die Online-Buchung ist Cal.com eingebunden. Die Daten, die du dort eingibst, werden zur Durchführung des Termins verarbeitet (Art. 6 Abs. 1 lit. b DSGVO).",
+    text: "Für freie Zeiten und die Terminverwaltung nutzen wir im Hintergrund Cal.com. Wenn du buchst, werden Name, E-Mail-Adresse und deine optionalen Angaben dorthin übertragen, um den Termin durchzuführen und zu bestätigen (Art. 6 Abs. 1 lit. b DSGVO).",
   },
   {
     title: "WhatsApp und Instagram",

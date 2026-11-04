@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { PortableText, type PortableTextBlock } from "@portabletext/react"
 import { pageShell, sectionTitle } from "@/components/ownui/PageIntro"
+import { Credentials } from "@/components/ownui/Credentials"
 import { Pill } from "@/components/ownui/Pill"
 import { BERATUNG_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
@@ -41,6 +42,10 @@ export function UeberMichView({ about }: { about: About }) {
         <div className="rich-text">
           {about?.story ? <PortableText value={about.story} /> : <p>{FALLBACK_STORY}</p>}
         </div>
+      </section>
+
+      <section className={`${pageShell} mt-16 md:mt-24`}>
+        <Credentials className="mx-auto max-w-[1000px]" />
       </section>
 
       {about?.certifications && about.certifications.length > 0 && (

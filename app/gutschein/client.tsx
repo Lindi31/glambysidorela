@@ -6,6 +6,7 @@ import { fieldClass, labelClass, useRequest } from "@/components/ownui/useReques
 import { pillClass } from "@/components/ownui/Pill";
 import { GIFT_AMOUNTS } from "@/lib/offers";
 import { SITE, whatsappUrl } from "@/lib/site";
+import { Logo } from "@/components/ownui/Logo";
 
 export function GiftBuilder() {
   const [amount, setAmount] = useState(100);
@@ -58,7 +59,7 @@ export function GiftBuilder() {
               className="mx-auto flex aspect-[8/5] w-full max-w-[620px] flex-col justify-between rounded-[24px] bg-charcoal p-[clamp(22px,4vw,40px)] text-cream shadow-[0_40px_80px_rgba(44,40,38,.32)]"
             >
               <div className="flex items-start justify-between gap-4">
-                <span className="font-display text-[clamp(20px,2.4vw,28px)]">GlamBySidorela</span>
+                <Logo variant="large" dark className="w-[clamp(170px,26vw,290px)]" />
                 <span className="font-display text-[clamp(34px,5vw,60px)] leading-none text-gold">{amount} €</span>
               </div>
               <div>

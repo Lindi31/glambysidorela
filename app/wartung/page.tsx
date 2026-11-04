@@ -3,9 +3,10 @@ import { client } from "@/sanity/lib/client";
 import { defineQuery } from "next-sanity";
 import { Pill } from "@/components/ownui/Pill";
 import { SITE } from "@/lib/site";
+import { Logo } from "@/components/ownui/Logo";
 
 export const metadata: Metadata = {
-  title: { absolute: "Wir sind gleich zurück | GlamBySidorela" },
+  title: { absolute: "Wir sind gleich zurück | Sidorela Isa Beauty Studio & Academy" },
   robots: { index: false, follow: false },
 };
 
@@ -23,8 +24,8 @@ export default async function MaintenancePage() {
         <path className="ring-soft" d="M40 300 A460 280 0 0 1 960 300" stroke="#FFF1D6" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
       <div className="relative">
-        <p className="font-display text-[24px]">{SITE.name}</p>
-        <h1 className="mx-auto mt-5 max-w-[12em] text-balance font-display text-[clamp(44px,7vw,84px)] leading-[0.99] tracking-[-0.022em]">Gleich wieder für dich da.</h1>
+        <Logo variant="large" dark className="mx-auto w-[min(78vw,340px)]" />
+        <h1 className="mx-auto mt-8 max-w-[12em] text-balance font-display text-[clamp(44px,7vw,84px)] leading-[0.99] tracking-[-0.022em]">Gleich wieder für dich da.</h1>
         <p className="mx-auto mt-5 max-w-[30em] text-[17px] leading-snug text-cream/80 md:text-[19px]">{message}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Pill href={`https://wa.me/${data?.whatsapp ?? SITE.whatsapp}`} variant="light">Per WhatsApp schreiben</Pill>

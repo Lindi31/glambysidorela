@@ -3,7 +3,7 @@ import Link from "next/link"
 import { PageIntro, cardClass, pageShell } from "@/components/ownui/PageIntro"
 import { Pill } from "@/components/ownui/Pill"
 import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
-import { BERATUNG_HREF } from "@/lib/offers"
+import { ERSTGESPRAECH_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
 
 type Training = {
@@ -20,8 +20,8 @@ type Training = {
 export function SchulungenGrid({ trainings }: { trainings: Training[] }) {
   return (
     <div className="bg-cream pb-24 md:pb-32">
-      <PageIntro title="Lash- und PMU-Schulungen von der Expertin." lead="Lerne das Handwerk bei Sidorela in Bruchsal oder Jülich, mit Praxis, persönlicher Anleitung und Starterset.">
-        <div className="mt-7"><Pill href={BERATUNG_HREF}>Kostenloses Erstgespräch</Pill></div>
+      <PageIntro title="Lash- und PMU-Schulungen von der Expertin." lead="Praxisorientierte Schulungen in Bruchsal und Jülich, direkt von einer Lash Artist mit 6 Jahren Erfahrung. Mit persönlicher Anleitung und Starterset.">
+        <div className="mt-7"><Pill href={ERSTGESPRAECH_HREF}>Kostenloses Erstgespräch</Pill></div>
       </PageIntro>
 
       <div className={`${pageShell} flex flex-col gap-4`}>

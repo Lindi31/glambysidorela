@@ -19,7 +19,7 @@ export type CatalogService = {
   short: string
   body: string[]
   duration: number
-  priceFrom: number
+  priceFrom?: number
 }
 
 export const SERVICES: CatalogService[] = [
@@ -56,8 +56,19 @@ export const SERVICES: CatalogService[] = [
       "Beim Lash Lifting werden deine Naturwimpern vom Ansatz an in Form gebracht. Das öffnet den Blick, ganz ohne künstliche Wimpern.",
       "Perfekt für alle, die es unkompliziert und natürlich mögen.",
     ],
-    duration: 60,
+    duration: 90,
     priceFrom: 89,
+  },
+  {
+    slug: "wimpern-auffuellen",
+    title: "Wimpern auffüllen",
+    category: "lashes",
+    short: "Frisch aufgefüllt, damit dein Wimpernkranz wieder voll und gleichmäßig aussieht.",
+    body: [
+      "Ausgefallene Wimpern werden ersetzt und der Kranz wieder gleichmäßig aufgebaut. So bleibt dein Look durchgehend schön.",
+      "Sprich mich gerne an, wenn du dir unsicher bist, wann der richtige Zeitpunkt ist.",
+    ],
+    duration: 70,
   },
   {
     slug: "brow-lamination",
@@ -80,7 +91,7 @@ export const SERVICES: CatalogService[] = [
       "Mit einer feinen Klinge werden Härchen für Härchen in die oberste Hautschicht gezeichnet. Form und Farbe stimmen wir vorher gemeinsam ab.",
       "In einem persönlichen Gespräch klären wir, ob die Behandlung zu dir passt und was du davor und danach beachten solltest.",
     ],
-    duration: 150,
+    duration: 180,
     priceFrom: 349,
   },
   {
@@ -92,7 +103,7 @@ export const SERVICES: CatalogService[] = [
       "Powder Brows wirken wie dezent geschminkt: weich im Verlauf und klar in der Form. Eine schöne Wahl, wenn du gerne definierte Brauen trägst.",
       "Form und Intensität besprechen wir vorab, damit das Ergebnis zu deinem Gesicht passt.",
     ],
-    duration: 150,
+    duration: 180,
     priceFrom: 349,
   },
   {
@@ -116,7 +127,7 @@ export const SERVICES: CatalogService[] = [
       "An deinem großen Tag soll alles sitzen. Wir entwickeln einen Look, der zu dir, deinem Kleid und deiner Feier passt.",
       "Sprich mich früh an, damit dein Wunschtermin frei ist.",
     ],
-    duration: 90,
+    duration: 150,
     priceFrom: 129,
   },
   {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BERATUNG_HREF } from "@/lib/offers";
 import { ProductArt } from "./ProductArt";
+import { Logo } from "@/components/ownui/Logo";
 import { cn } from "@/lib/utils";
 
 type TileProps = {
@@ -66,8 +67,8 @@ export function Bento() {
           className="bg-nude/70 md:col-span-3"
         >
           <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-8 hidden aspect-[8/5] w-[300px] -rotate-6 rounded-2xl bg-charcoal p-5 shadow-[0_30px_60px_rgba(44,40,38,.3)] transition-transform duration-700 ease-out group-hover:-translate-y-2 group-hover:rotate-0 sm:block">
-            <span className="font-display text-[19px] text-cream">GlamBySidorela</span>
-            <span className="mt-1 block text-[11px] text-gold">Gutschein</span>
+            <Logo dark className="text-cream" />
+            <span className="mt-2 block text-[11px] text-gold">Gutschein</span>
           </div>
         </Tile>
 

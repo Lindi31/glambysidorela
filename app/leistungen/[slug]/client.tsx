@@ -12,6 +12,7 @@ type SanityImage = Parameters<typeof urlFor>[0] & { asset?: { _ref?: string } }
 
 type Service = {
   title: string
+  slug: string
   category?: string | null
   shortDescription?: string | null
   description?: PortableTextBlock[] | null
@@ -31,9 +32,7 @@ const STEPS = [
 type Related = { _id: string; title: string; slug: string; priceFrom?: number | null }
 
 export function ServiceDetail({ service, related }: { service: Service; related: Related[] }) {
-  const bookingHref = service.calcomEventType
-    ? `/termin?event=${service.calcomEventType}`
-    : service.category ? `/termin?behandlung=${service.category}` : "/termin"
+  const bookingHref = service.calcomEventType ? `/termin?event=${service.calcomEventType}` : `/termin?behandlung=${service.slug}`
   const whatsapp = whatsappUrl(`Hallo Sidorela, ich habe eine Frage zu ${service.title}.`)
   const photos = [service.image, ...(service.gallery ?? [])].filter((photo): photo is SanityImage => Boolean(photo?.asset?._ref))
   const meta = [

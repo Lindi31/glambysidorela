@@ -46,7 +46,7 @@ export function BeautyCheck() {
               <p className="mt-6 max-w-[32em] text-[19px] leading-snug text-charcoal/75">{result.why}</p>
               <p className="mt-4 text-[17px] font-medium text-charcoal">ab {result.from} €</p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Pill href="/termin">Termin buchen</Pill>
+                <Pill href={`/termin?behandlung=${result.slug}`}>Termin buchen</Pill>
                 <Pill href={BERATUNG_HREF} variant="outline">Kostenlose Beratung</Pill>
                 <button type="button" onClick={() => setAnswers([])} className="min-h-11 px-3 text-[15px] text-charcoal/75 underline underline-offset-4">
                   Neu starten
