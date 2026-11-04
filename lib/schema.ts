@@ -53,7 +53,6 @@ export function siteGraph() {
         name: SITE.name,
         url: SITE_URL,
         image: IMAGE,
-        logo: `${SITE_URL}/brand/sidorela-isa-profilbild.png`,
         email: SITE.email,
         telephone: SITE.phone,
         founder: { "@type": "Person", name: SITE.owner },

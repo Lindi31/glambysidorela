@@ -24,7 +24,7 @@ export default async function MaintenancePage() {
         <path className="ring-soft" d="M40 300 A460 280 0 0 1 960 300" stroke="#FFF1D6" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
       <div className="relative">
-        <Logo variant="large" dark className="mx-auto w-[min(78vw,340px)]" />
+        <Logo variant="large" className="mx-auto w-[min(72vw,300px)]" />
         <h1 className="mx-auto mt-8 max-w-[12em] text-balance font-display text-[clamp(44px,7vw,84px)] leading-[0.99] tracking-[-0.022em]">Gleich wieder für dich da.</h1>
         <p className="mx-auto mt-5 max-w-[30em] text-[17px] leading-snug text-cream/80 md:text-[19px]">{message}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

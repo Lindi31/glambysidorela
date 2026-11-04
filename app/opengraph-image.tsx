@@ -15,7 +15,7 @@ export default async function Image() {
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", background: "#2C2826", color: "#FAF7F2" }}>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: 64 }}>
-        <img src={logo} width={590} height={100} alt="" />
+        <img src={logo} width={560} height={85} alt="" />
         <div style={{ marginTop: 44, fontSize: 28, lineHeight: 1.3, color: "#E8D5C4", display: "flex", whiteSpace: "nowrap" }}>Lashes, Brows und Permanent Make-up</div>
         <div style={{ marginTop: 6, fontSize: 28, color: "#E8D5C4", display: "flex" }}>in Bruchsal und Jülich</div>
       </div>

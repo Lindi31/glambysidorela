@@ -39,7 +39,7 @@ export async function Footer() {
   return (
     <footer className="bg-charcoal pb-28 text-[13px] text-cream/70 md:pb-10">
       <div className="mx-auto max-w-[1200px] border-t border-cream/15 px-5 pt-12 lg:px-8">
-        <Link href="/" aria-label="Zur Startseite" className="mb-10 inline-block text-cream"><Logo variant="large" dark className="w-[min(78vw,300px)]" /></Link>
+        <Link href="/" aria-label="Zur Startseite" className="mb-10 inline-block text-cream"><Logo variant="large" className="w-[min(72vw,260px)]" /></Link>
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
           {COLUMNS.map((column) => (
             <nav key={column.title} aria-label={column.title}>

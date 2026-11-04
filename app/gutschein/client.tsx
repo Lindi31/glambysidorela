@@ -59,8 +59,8 @@ export function GiftBuilder() {
               className="mx-auto flex aspect-[8/5] w-full max-w-[620px] flex-col justify-between rounded-[24px] bg-charcoal p-[clamp(22px,4vw,40px)] text-cream shadow-[0_40px_80px_rgba(44,40,38,.32)]"
             >
               <div className="flex items-start justify-between gap-4">
-                <Logo variant="large" dark className="w-[clamp(170px,26vw,290px)]" />
-                <span className="font-display text-[clamp(34px,5vw,60px)] leading-none text-gold">{amount} €</span>
+                <Logo variant="large" className="min-w-0 w-[clamp(130px,22vw,250px)]" />
+                <span className="flex-none whitespace-nowrap font-display text-[clamp(32px,5vw,60px)] leading-none text-gold">{amount} €</span>
               </div>
               <div>
                 <p className="font-display text-[clamp(26px,3.6vw,44px)] leading-[1.05]">{recipient ? `Für ${recipient}` : "Für dich"}</p>

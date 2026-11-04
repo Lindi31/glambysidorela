@@ -70,7 +70,7 @@ export function Header() {
     >
       <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-6 px-5 lg:px-8">
         <Link href="/" onClick={() => setOpen(false)} aria-label="Sidorela Isa Beauty Studio und Academy, zur Startseite" className="flex min-h-11 items-center">
-          <Logo dark={dark} />
+          <Logo />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Hauptnavigation">
