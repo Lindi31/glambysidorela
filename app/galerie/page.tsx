@@ -7,7 +7,8 @@ import type { Metadata } from "next"
 import { GalerieGrid } from "./client"
 
 export const metadata: Metadata = {
-  title: "Galerie – GlamBySidorela",
+  title: "Galerie: Lashes, Brows und PMU, vorher und nachher",
+  alternates: { canonical: "/galerie" },
   description:
     "Vorher-Nachher Bilder und Ergebnisse von Sidorela Isa: Lashes, Brows, Permanent Make-up und Make-up in Bruchsal und Jülich.",
 }

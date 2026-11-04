@@ -4,10 +4,12 @@ import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
 import { PortableText } from "@portabletext/react"
 import type { Metadata } from "next"
+import { LOCATIONS, SITE } from "@/lib/site"
 
 export const metadata: Metadata = {
-  title: "Impressum – GlamBySidorela",
+  title: "Impressum",
   robots: { index: false },
+  alternates: { canonical: "/impressum" },
 }
 
 const IMPRESSUM_QUERY = defineQuery(`
@@ -16,31 +18,43 @@ const IMPRESSUM_QUERY = defineQuery(`
 
 export default async function ImpressumPage() {
   const page = await client.fetch(IMPRESSUM_QUERY).catch(() => null)
+  const main = LOCATIONS[0]
 
   return (
     <>
       <Header />
-      <main className="bg-cream pt-32 pb-24 min-h-screen">
-        <div className="mx-auto max-w-3xl px-6 lg:px-10">
-          <div className="text-xs tracking-[0.2em] uppercase text-gold mb-4">— Rechtliches</div>
-          <h1 className="font-display text-5xl md:text-6xl text-charcoal leading-tight mb-12">
+      <main className="min-h-svh bg-cream pb-16 pt-24 md:pb-24 md:pt-32">
+        <div className="mx-auto max-w-[760px] px-5">
+          <h1 className="mb-10 font-display text-[clamp(42px,6vw,72px)] leading-[1] tracking-[-0.022em] text-charcoal">
             {page?.title ?? "Impressum"}
           </h1>
 
           {page?.content ? (
-            <div className="prose prose-lg max-w-none text-charcoal/80 prose-headings:font-display prose-headings:text-charcoal prose-strong:text-charcoal">
+            <div className="rich-text">
               <PortableText value={page.content} />
             </div>
           ) : (
-            <div className="rounded-2xl bg-nude/30 border border-nude p-8 text-charcoal/70">
-              <p className="font-medium text-charcoal mb-2">Inhalt noch nicht eingetragen.</p>
-              <p className="text-sm">
-                Bitte füge den Impressumstext im{" "}
-                <a href="/studio" className="text-rose hover:underline">
-                  Sanity Studio
-                </a>{" "}
-                unter <strong>Rechtliche Seiten → Impressum</strong> ein.
-              </p>
+            <div className="space-y-8 text-[17px] leading-relaxed text-charcoal/80">
+              <section>
+                <h2 className="mb-2 font-display text-[28px] leading-[1.1] text-charcoal">Angaben gemäß § 5 DDG</h2>
+                <address className="not-italic">
+                  {SITE.owner}
+                  <br />
+                  {SITE.name}
+                  <br />
+                  {main.street}
+                  <br />
+                  {main.postalCode} {main.city}
+                </address>
+              </section>
+              <section>
+                <h2 className="mb-2 font-display text-[28px] leading-[1.1] text-charcoal">Kontakt</h2>
+                <p>
+                  Telefon: <a className="underline underline-offset-4" href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a>
+                  <br />
+                  E-Mail: <a className="underline underline-offset-4" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                </p>
+              </section>
             </div>
           )}
         </div>

@@ -1,7 +1,6 @@
 import { Resend } from "resend"
 import { NextResponse } from "next/server"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { escapeHtml } from "@/lib/mail"
 
 export async function POST(req: Request) {
   try {
@@ -11,17 +10,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Alle Felder sind erforderlich." }, { status: 400 })
     }
 
+    const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
       from: "GlamBySidorela <onboarding@resend.dev>",
       to: process.env.CONTACT_EMAIL ?? "kontakt@glambysidorela.de",
-      replyTo: email,
-      subject: `Neue Anfrage von ${name}`,
+      replyTo: String(email),
+      subject: `Neue Anfrage von ${String(name).slice(0, 80)}`,
       html: `
         <h2>Neue Kontaktanfrage</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>E-Mail:</strong> ${email}</p>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>E-Mail:</strong> ${escapeHtml(email)}</p>
         <p><strong>Nachricht:</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
+        <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>
       `,
     })
 

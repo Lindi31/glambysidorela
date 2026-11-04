@@ -7,7 +7,8 @@ import type { Metadata } from "next"
 import { UeberMichView } from "./client"
 
 export const metadata: Metadata = {
-  title: "Über mich – GlamBySidorela",
+  title: "Über Sidorela Isa, Lash- und PMU-Artist",
+  alternates: { canonical: "/ueber-mich" },
   description:
     "Lern Sidorela Isa kennen – zertifizierte Lash- und Make-up-Artistin aus Bruchsal. Erfahre mehr über ihre Leidenschaft, Ausbildung und Philosophie.",
 }

@@ -4,9 +4,11 @@ import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
 import type { Metadata } from "next"
 import { KontaktView } from "./client"
+import { Locations } from "@/components/home/Locations"
 
 export const metadata: Metadata = {
-  title: "Kontakt – GlamBySidorela",
+  title: "Kontakt & Standorte in Bruchsal und Jülich",
+  alternates: { canonical: "/kontakt" },
   description:
     "Nimm Kontakt mit Sidorela Isa auf – per E-Mail, WhatsApp oder direkt über das Buchungssystem. Standorte in Bruchsal und Jülich.",
 }
@@ -25,6 +27,7 @@ export default async function KontaktPage() {
       <Header />
       <main>
         <KontaktView settings={settings} />
+        <Locations />
       </main>
       <Footer />
     </>

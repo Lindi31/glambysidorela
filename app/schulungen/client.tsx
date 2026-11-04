@@ -1,118 +1,57 @@
-"use client"
-
-import Link from "next/link"
 import Image from "next/image"
-import { motion } from "framer-motion"
-import { ArrowUpRight, Calendar, Clock } from "lucide-react"
+import Link from "next/link"
+import { PageIntro, cardClass, pageShell } from "@/components/ownui/PageIntro"
+import { Pill } from "@/components/ownui/Pill"
+import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
+import { BERATUNG_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
 
-const levelColors: Record<string, string> = {
-  Einsteiger: "bg-nude/60 text-mauve",
-  Fortgeschritten: "bg-rose/20 text-rose",
-  Masterclass: "bg-gold/20 text-gold",
+type Training = {
+  _id: string
+  title: string
+  slug: string
+  level?: string | null
+  durationDays?: number | null
+  price?: number | null
+  image?: Parameters<typeof urlFor>[0] | null
+  upcomingDates?: unknown[] | null
 }
 
-export function SchulungenGrid({ trainings }: { trainings: any[] }) {
+export function SchulungenGrid({ trainings }: { trainings: Training[] }) {
   return (
-    <section className="min-h-screen pt-32 pb-24 bg-cream">
+    <div className="bg-cream pb-24 md:pb-32">
+      <PageIntro title="Lash- und PMU-Schulungen von der Expertin." lead="Lerne das Handwerk bei Sidorela in Bruchsal oder Jülich, mit Praxis, persönlicher Anleitung und Starterset.">
+        <div className="mt-7"><Pill href={BERATUNG_HREF}>Kostenloses Erstgespräch</Pill></div>
+      </PageIntro>
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl mb-16"
-        >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Schulungen</div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
-            Lern von der <span className="italic text-rose">Expertin.</span>
-          </h1>
-          <p className="mt-6 text-lg text-charcoal/70 leading-relaxed">
-            Professionelle Aus- und Weiterbildung in Lashes, Brows und Permanent Make-up – für Einsteiger und
-            Fortgeschrittene.
-          </p>
-        </motion.div>
-
-        {trainings.length === 0 ? (
-          <div className="py-24 text-center">
-            <p className="text-charcoal/40 text-lg">Noch keine Schulungen verfügbar.</p>
-          </div>
-        ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {trainings.map((training, i) => (
-              <motion.div
-                key={training._id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-              >
-                <Link
-                  href={`/schulungen/${training.slug}`}
-                  className="group relative flex flex-col h-full rounded-2xl bg-white border border-nude/60 shadow-sm hover:border-rose/60 hover:shadow-lg transition-all duration-300 overflow-hidden"
-                >
+      <div className={`${pageShell} flex flex-col gap-4`}>
+        {trainings.length > 0 && (
+          <ul className="mb-8 grid gap-4 md:grid-cols-2">
+            {trainings.map((training) => (
+              <li key={training._id}>
+                <Link href={`/schulungen/${training.slug}`} className={`${cardClass} flex h-full flex-col overflow-hidden transition-transform duration-700 ease-out hover:scale-[1.008]`}>
                   {training.image && (
-                    <div className="w-full aspect-[3/2] overflow-hidden bg-nude/20 shrink-0">
-                      <Image
-                        src={urlFor(training.image).width(600).height(400).url()}
-                        alt={training.title}
-                        width={600}
-                        height={400}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                    <div className="relative aspect-[16/10] bg-nude/30">
+                      <Image src={urlFor(training.image).width(1000).height(625).url()} alt={training.title} fill sizes="(max-width: 768px) 90vw, 580px" className="object-cover" />
                     </div>
                   )}
-
-                  <div className="flex flex-col flex-1 p-8">
-                    <div
-                      className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 pointer-events-none"
-                      style={{ background: "radial-gradient(circle, rgba(212,165,165,0.3), transparent)" }}
-                    />
-
-                    {training.level && (
-                      <span
-                        className={`self-start text-xs tracking-wider uppercase px-3 py-1 rounded-full mb-4 ${levelColors[training.level] ?? "bg-nude/40 text-mauve"}`}
-                      >
-                        {training.level}
-                      </span>
-                    )}
-
-                    <h2 className="font-display text-2xl text-charcoal mb-3">{training.title}</h2>
-
-                    <div className="flex flex-wrap gap-4 text-sm text-charcoal/60 mb-6">
-                      {training.durationDays && (
-                        <span className="flex items-center gap-1.5">
-                          <Clock size={14} className="text-rose" />
-                          {training.durationDays} {training.durationDays === 1 ? "Tag" : "Tage"}
-                        </span>
-                      )}
-                      {training.upcomingDates?.length > 0 && (
-                        <span className="flex items-center gap-1.5">
-                          <Calendar size={14} className="text-rose" />
-                          {training.upcomingDates.length} Termine
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-nude/50 mt-auto">
-                      {training.price ? (
-                        <span className="text-sm text-charcoal/60">
-                          ab <span className="text-charcoal font-medium">{training.price} €</span>
-                        </span>
-                      ) : (
-                        <span />
-                      )}
-                      <div className="w-9 h-9 rounded-full bg-nude/30 flex items-center justify-center group-hover:bg-rose group-hover:rotate-45 transition-all duration-300">
-                        <ArrowUpRight size={16} className="text-rose group-hover:text-cream transition-colors" />
-                      </div>
-                    </div>
+                  <div className="flex flex-1 flex-col p-6 md:p-9">
+                    {training.level && <p className="text-[15px] text-gold-accent">{training.level}</p>}
+                    <h2 className="mt-1 font-display text-[clamp(32px,3.6vw,44px)] leading-[1.03] tracking-[-0.018em] text-charcoal">{training.title}</h2>
+                    <p className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-[15px] text-charcoal/75">
+                      {training.price && <span className="font-medium text-charcoal">ab {training.price} €</span>}
+                      {training.durationDays && <span>{training.durationDays} {training.durationDays === 1 ? "Tag" : "Tage"}</span>}
+                      {training.upcomingDates?.length ? <span>{training.upcomingDates.length} {training.upcomingDates.length === 1 ? "Termin" : "Termine"}</span> : <span>Termine auf Anfrage</span>}
+                    </p>
                   </div>
                 </Link>
-              </motion.div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
+        <TrainingCalculator />
+        <TrainingWaitlist training="Schulungen allgemein" />
       </div>
-    </section>
+    </div>
   )
 }

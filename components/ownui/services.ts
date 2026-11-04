@@ -57,27 +57,6 @@ export const services: ServiceCategory[] = [
   },
 ];
 
-export const testimonials = [
-  {
-    name: "Elena M.",
-    text: "Sidorela ist ein absoluter Profi. Meine Lashes sehen einfach perfekt aus und das Gespräch vorab war sehr entspannt und professionell. Komme sicher wieder!",
-    rating: 5,
-    service: "Wimpernverlängerung",
-  },
-  {
-    name: "Jessica K.",
-    text: "Das beste Microblading, das ich je hatte. Nach zwei Jahren Suche bin ich endlich angekommen. Absolute Empfehlung für alle in der Region Karlsruhe.",
-    rating: 5,
-    service: "Microblading",
-  },
-  {
-    name: "Alina D.",
-    text: "Ich war bei der Lash-Schulung und habe so viel gelernt. Sidorela erklärt geduldig, zeigt alles mehrfach und man merkt wie sehr sie für ihren Beruf brennt.",
-    rating: 5,
-    service: "Schulung",
-  },
-];
-
 export const locations = [
   {
     city: "Bruchsal",

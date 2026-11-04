@@ -1,13 +1,13 @@
 "use client"
 
-import Link from "next/link"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { motion } from "framer-motion"
-import { MapPin, Mail, Phone, Clock, CheckCircle2, AlertCircle, ExternalLink } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { PageIntro, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
+import { pillClass } from "@/components/ownui/Pill"
+import { fieldClass, labelClass } from "@/components/ownui/useRequest"
+import { SITE } from "@/lib/site"
 
 const schema = z.object({
   name: z.string().min(2, "Bitte gib deinen Namen ein."),
@@ -17,22 +17,9 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-const FALLBACK = {
-  whatsapp: "4915252609602",
-  email: "kontakt@glambysidorela.de",
-  instagram: "https://www.instagram.com/glambysidorela",
-  locations: [
-    { city: "Bruchsal", addressLine: "Region Karlsruhe", hours: "Mo – Sa nach Vereinbarung", phone: null },
-    { city: "Jülich", addressLine: "Großraum Aachen", hours: "Mo – Sa nach Vereinbarung", phone: null },
-  ],
-}
-
 function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-  })
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data: FormData) => {
     setStatus("loading")
@@ -52,252 +39,75 @@ function ContactForm() {
 
   if (status === "success") {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center py-16 text-center"
-      >
-        <CheckCircle2 size={48} className="text-rose mb-4" />
-        <h3 className="font-display text-2xl text-charcoal mb-2">Nachricht gesendet!</h3>
-        <p className="text-charcoal/60">Ich melde mich so schnell wie möglich bei dir.</p>
-        <button
-          onClick={() => setStatus("idle")}
-          className="mt-6 text-sm text-charcoal/50 hover:text-rose transition-colors"
-        >
+      <div aria-live="polite">
+        <h2 className={sectionTitle}>Danke, deine Nachricht ist da.</h2>
+        <p className="mt-3 text-[17px] text-charcoal/75">Ich melde mich so schnell wie möglich bei dir.</p>
+        <button type="button" onClick={() => setStatus("idle")} className="mt-3 min-h-11 text-[15px] font-medium text-charcoal underline underline-offset-4">
           Weitere Nachricht senden
         </button>
-      </motion.div>
+      </div>
     )
   }
 
+  const error = (message?: string) => message && <span role="alert" className="text-[13px] font-normal text-rose-deep">{message}</span>
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-      <div>
-        <label className="block text-sm font-medium text-charcoal mb-1.5" htmlFor="name">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+      <h2 className={sectionTitle}>Schreib mir direkt.</h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className={labelClass}>
           Name
+          <input className={fieldClass} type="text" autoComplete="name" aria-invalid={Boolean(errors.name)} {...register("name")} />
+          {error(errors.name?.message)}
         </label>
-        <input
-          id="name"
-          type="text"
-          autoComplete="name"
-          placeholder="Dein Name"
-          {...register("name")}
-          className="w-full h-12 px-4 rounded-2xl border border-nude/60 bg-white text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-rose transition-colors text-sm"
-        />
-        {errors.name && (
-          <p className="mt-1.5 text-xs text-rose flex items-center gap-1">
-            <AlertCircle size={12} /> {errors.name.message}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-charcoal mb-1.5" htmlFor="email">
+        <label className={labelClass}>
           E-Mail
+          <input className={fieldClass} type="email" autoComplete="email" aria-invalid={Boolean(errors.email)} {...register("email")} />
+          {error(errors.email?.message)}
         </label>
-        <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder="deine@email.de"
-          {...register("email")}
-          className="w-full h-12 px-4 rounded-2xl border border-nude/60 bg-white text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-rose transition-colors text-sm"
-        />
-        {errors.email && (
-          <p className="mt-1.5 text-xs text-rose flex items-center gap-1">
-            <AlertCircle size={12} /> {errors.email.message}
-          </p>
-        )}
       </div>
-
-      <div>
-        <label className="block text-sm font-medium text-charcoal mb-1.5" htmlFor="message">
-          Nachricht
-        </label>
-        <textarea
-          id="message"
-          rows={5}
-          placeholder="Wie kann ich dir helfen?"
-          {...register("message")}
-          className="w-full px-4 py-3 rounded-2xl border border-nude/60 bg-white text-charcoal placeholder:text-charcoal/30 focus:outline-none focus:border-rose transition-colors text-sm resize-none"
-        />
-        {errors.message && (
-          <p className="mt-1.5 text-xs text-rose flex items-center gap-1">
-            <AlertCircle size={12} /> {errors.message.message}
-          </p>
-        )}
-      </div>
-
-      {status === "error" && (
-        <p className="text-sm text-rose flex items-center gap-2">
-          <AlertCircle size={16} />
-          Etwas ist schiefgelaufen. Bitte versuche es erneut.
-        </p>
-      )}
-
-      <Button
-        type="submit"
-        disabled={status === "loading"}
-        className="w-full bg-rose hover:bg-mauve text-cream rounded-full h-12 text-base disabled:opacity-60"
-      >
-        {status === "loading" ? "Wird gesendet…" : "Nachricht senden"}
-      </Button>
+      <label className={labelClass}>
+        Nachricht
+        <textarea className={`${fieldClass} py-3`} rows={5} aria-invalid={Boolean(errors.message)} {...register("message")} />
+        {error(errors.message?.message)}
+      </label>
+      {status === "error" && <p role="alert" className="text-[14px] text-rose-deep">Das hat nicht geklappt. Bitte versuche es noch einmal oder schreib mir per WhatsApp.</p>}
+      <button type="submit" disabled={status === "loading"} className={pillClass("dark", "self-start disabled:opacity-60")}>
+        {status === "loading" ? "Wird gesendet …" : "Nachricht senden"}
+      </button>
     </form>
   )
 }
 
-export function KontaktView({ settings }: { settings: any }) {
-  const whatsapp = settings?.whatsapp ?? FALLBACK.whatsapp
-  const instagram = settings?.instagram ?? FALLBACK.instagram
-  const locations = settings?.locations?.length ? settings.locations : FALLBACK.locations
+export function KontaktView({ settings }: { settings?: { whatsapp?: string | null; instagram?: string | null } | null }) {
+  const channels = [
+    { href: `https://wa.me/${settings?.whatsapp ?? SITE.whatsapp}`, title: "WhatsApp", text: "Am schnellsten" },
+    { href: `mailto:${SITE.email}`, title: "E-Mail", text: SITE.email },
+    { href: settings?.instagram ?? SITE.instagram, title: "Instagram", text: SITE.instagramHandle },
+  ]
 
   return (
-    <section className="min-h-screen pt-32 pb-24 bg-cream">
-
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl mb-16"
-        >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Kontakt</div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
-            Lass uns <span className="italic text-rose">reden.</span>
-          </h1>
-          <p className="mt-6 text-lg text-charcoal/70 leading-relaxed">
-            Du hast Fragen, möchtest einen Termin buchen oder interessierst dich für eine Schulung? Meld dich einfach.
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Direct contact + form */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="space-y-4"
-          >
-            <h2 className="font-display text-2xl text-charcoal mb-6">Direktkontakt</h2>
-
-            <a
-              href={`https://wa.me/${whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-5 p-6 rounded-2xl bg-white border border-nude/60 hover:border-rose/60 hover:shadow-lg transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center shrink-0 group-hover:bg-rose transition-colors duration-300">
-                <Phone size={20} className="text-rose group-hover:text-cream transition-colors" />
-              </div>
-              <div>
-                <div className="font-medium text-charcoal">WhatsApp</div>
-                <div className="text-sm text-charcoal/60">Schnell & direkt anschreiben</div>
-              </div>
-            </a>
-
-            <a
-              href={`mailto:${FALLBACK.email}`}
-              className="group flex items-center gap-5 p-6 rounded-2xl bg-white border border-nude/60 hover:border-rose/60 hover:shadow-lg transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center shrink-0 group-hover:bg-rose transition-colors duration-300">
-                <Mail size={20} className="text-rose group-hover:text-cream transition-colors" />
-              </div>
-              <div>
-                <div className="font-medium text-charcoal">E-Mail</div>
-                <div className="text-sm text-charcoal/60">{FALLBACK.email}</div>
-              </div>
-            </a>
-
-            {instagram && (
+    <div className="bg-cream pb-24 md:pb-36">
+      <PageIntro title="Kontakt und Standorte in Bruchsal und Jülich." lead="Du hast Fragen, möchtest einen Termin oder interessierst dich für eine Schulung? Meld dich einfach." />
+      <div className={`${pageShell} flex flex-col gap-4`}>
+        <ul className="grid gap-4 md:grid-cols-3">
+          {channels.map((channel) => (
+            <li key={channel.title}>
               <a
-                href={instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-5 p-6 rounded-2xl bg-white border border-nude/60 hover:border-rose/60 hover:shadow-lg transition-all duration-300"
+                href={channel.href}
+                {...(channel.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className={`${cardClass} flex h-full min-h-32 flex-col justify-between gap-5 p-6 transition-transform duration-700 ease-out hover:scale-[1.01]`}
               >
-                <div className="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center shrink-0 group-hover:bg-rose transition-colors duration-300">
-                  <span className="text-rose group-hover:text-cream transition-colors text-lg font-bold">IG</span>
-                </div>
-                <div>
-                  <div className="font-medium text-charcoal">Instagram</div>
-                  <div className="text-sm text-charcoal/60">@glambysidorela</div>
-                </div>
+                <span className="font-display text-[32px] leading-none tracking-[-0.015em] text-charcoal">{channel.title}</span>
+                <span className="break-words text-[15px] text-charcoal/75">{channel.text}</span>
               </a>
-            )}
-
-            <div className="pt-4">
-              <Button asChild size="lg" className="w-full bg-rose hover:bg-mauve text-cream rounded-full h-12 text-base">
-                <Link href="/termin">Direkt Termin buchen</Link>
-              </Button>
-            </div>
-
-            {/* Inline contact form */}
-            <div className="pt-6 border-t border-nude/50">
-              <h3 className="font-display text-xl text-charcoal mb-5">Oder schreib mir direkt</h3>
-              <ContactForm />
-            </div>
-          </motion.div>
-
-          {/* Locations */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <h2 className="font-display text-2xl text-charcoal mb-6">Standorte</h2>
-            <div className="space-y-4">
-              {locations.map((loc: any, i: number) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="p-6 rounded-2xl bg-white border border-nude/60"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-rose/10 flex items-center justify-center shrink-0">
-                      <MapPin size={18} className="text-rose" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="font-display text-xl text-charcoal">{loc.city}</div>
-                      {loc.addressLine && (
-                        <div className="text-sm text-charcoal/60">{loc.addressLine}</div>
-                      )}
-                      {loc.hours && (
-                        <div className="flex items-center gap-2 text-sm text-charcoal/50 pt-1">
-                          <Clock size={13} className="text-rose shrink-0" />
-                          {loc.hours}
-                        </div>
-                      )}
-                      {loc.phone && (
-                        <a
-                          href={`tel:${loc.phone}`}
-                          className="flex items-center gap-2 text-sm text-charcoal/50 hover:text-rose transition-colors pt-1"
-                        >
-                          <Phone size={13} className="text-rose shrink-0" />
-                          {loc.phone}
-                        </a>
-                      )}
-                      <a
-                        href={`https://maps.google.com/?q=GlamBySidorela+${encodeURIComponent(loc.city)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 mt-3 text-xs text-charcoal/50 hover:text-rose transition-colors"
-                      >
-                        <ExternalLink size={11} />
-                        Auf Google Maps öffnen
-                      </a>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+            </li>
+          ))}
+        </ul>
+        <div className={`${cardClass} p-6 md:p-10`}>
+          <ContactForm />
         </div>
       </div>
-    </section>
+    </div>
   )
 }

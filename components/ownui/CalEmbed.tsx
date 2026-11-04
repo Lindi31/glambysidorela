@@ -20,10 +20,10 @@ export function CalEmbed({ eventType, showAll = false }: Props) {
         theme: "light",
         cssVarsPerTheme: {
           light: {
-            "cal-brand": "#D4A5A5",
+            "cal-brand": "#2C2826",
             "cal-text": "#2C2826",
-            "cal-bg": "#FAF7F2",
-            "cal-bg-muted": "#E8D5C4",
+            "cal-bg": "#FFFFFF",
+            "cal-bg-muted": "#F3EEE7",
             "cal-border": "#E8D5C4",
           },
           dark: {
@@ -45,9 +45,9 @@ export function CalEmbed({ eventType, showAll = false }: Props) {
   const calLink = showAll || !eventType ? CAL_USERNAME : `${CAL_USERNAME}/${eventType}`;
 
   return (
-    <div className="relative w-full bg-cream rounded-3xl overflow-hidden border border-nude/40 min-h-[500px]">
+    <div className="relative min-h-[720px] w-full overflow-hidden rounded-[24px] bg-white md:rounded-[28px]">
       {loading && (
-        <div className="absolute inset-0 z-10 bg-cream flex flex-col gap-4 p-8 animate-pulse">
+        <div className="absolute inset-0 z-10 bg-white flex flex-col gap-4 p-8 animate-pulse">
           <div className="h-8 w-48 rounded-xl bg-nude/60" />
           <div className="grid grid-cols-7 gap-2 mt-4">
             {[...Array(35)].map((_, i) => (
@@ -59,7 +59,7 @@ export function CalEmbed({ eventType, showAll = false }: Props) {
       <Cal
         namespace={eventType ?? "all"}
         calLink={calLink}
-        style={{ width: "100%", height: "100%", overflow: "scroll" }}
+        style={{ width: "100%", minHeight: 720, overflow: "auto" }}
         config={{ layout: "month_view", theme: "light" }}
       />
     </div>

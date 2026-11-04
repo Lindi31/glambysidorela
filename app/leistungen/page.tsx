@@ -1,5 +1,4 @@
-import { sanityFetch } from "@/sanity/lib/live"
-import { defineQuery } from "next-sanity"
+import { getServices } from "@/lib/content"
 import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
 import { CtaBooking } from "@/components/ownui/CtaBooking"
@@ -7,19 +6,14 @@ import type { Metadata } from "next"
 import { LeistungenGrid } from "./client"
 
 export const metadata: Metadata = {
-  title: "Leistungen – GlamBySidorela",
+  title: "Leistungen: Lashes, Brows, PMU & Make-up in Bruchsal und Jülich",
+  alternates: { canonical: "/leistungen" },
   description:
     "Alle Beauty-Treatments von Sidorela Isa: Wimpernverlängerung, Brows, Permanent Make-up, Make-up und Gesichtsbehandlungen in Bruchsal und Jülich.",
 }
 
-const SERVICES_QUERY = defineQuery(`
-  *[_type == "service"] | order(order asc) {
-    _id, title, "slug": slug.current, category, shortDescription, priceFrom, duration, "image": image{ ..., asset }
-  }
-`)
-
 export default async function LeistungenPage() {
-  const { data: services } = await sanityFetch({ query: SERVICES_QUERY })
+  const services = await getServices()
   return (
     <>
       <Header />

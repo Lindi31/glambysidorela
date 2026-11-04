@@ -1,0 +1,71 @@
+// Zentrale Geschäftsdaten: überall gleich = wichtig für lokales SEO (Name, Adresse, Telefon).
+
+export const SITE_URL = "https://www.glambysidorela.de";
+
+export type SiteLocation = {
+  slug: "bruchsal" | "juelich";
+  city: string;
+  region: string;
+  regionName: string;
+  street: string;
+  postalCode: string;
+  hours: string;
+  nearby: string[];
+  mapsUrl: string;
+  reviewUrl: string | null; // Google-Bewertungslink, sobald das Unternehmensprofil steht
+};
+
+const mapsUrl = (query: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+
+export const SITE = {
+  name: "GlamBySidorela",
+  owner: "Sidorela Isa",
+  url: SITE_URL,
+  email: "kontakt@glambysidorela.de",
+  phone: "+4915252609602",
+  phoneDisplay: "+49 1525 2609602",
+  whatsapp: "4915252609602",
+  instagram: "https://www.instagram.com/sidorelaisa",
+  instagramHandle: "@sidorelaisa",
+  description:
+    "Lash-Extensions, Brows, Permanent Make-up, Make-up, Gesichtsbehandlungen und Schulungen von Sidorela Isa in Bruchsal und Jülich.",
+};
+
+export const LOCATIONS: SiteLocation[] = [
+  {
+    slug: "bruchsal",
+    city: "Bruchsal",
+    region: "Region Karlsruhe",
+    regionName: "Baden-Württemberg",
+    street: "Spöckweg 14",
+    postalCode: "76646",
+    hours: "Mo–Fr: 9:00–18:00, Sa nach Vereinbarung",
+    nearby: ["Karlsruhe", "Bretten", "Bad Schönborn", "Forst", "Ubstadt-Weiher", "Kraichtal"],
+    mapsUrl: mapsUrl("GlamBySidorela, Spöckweg 14, 76646 Bruchsal"),
+    reviewUrl: null,
+  },
+  {
+    slug: "juelich",
+    city: "Jülich",
+    region: "Großraum Aachen / Düren",
+    regionName: "Nordrhein-Westfalen",
+    street: "Gartenstraße 1 C",
+    postalCode: "52428",
+    hours: "Nach Vereinbarung",
+    nearby: ["Aachen", "Düren", "Linnich", "Titz", "Aldenhoven", "Inden"],
+    mapsUrl: mapsUrl("GlamBySidorela, Gartenstraße 1 C, 52428 Jülich"),
+    reviewUrl: null,
+  },
+];
+
+export const whatsappUrl = (text?: string) =>
+  `https://wa.me/${SITE.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  lashes: "Lashes",
+  brows: "Brows",
+  pmu: "Permanent Make-up",
+  makeup: "Make-up",
+  facial: "Gesichtsbehandlungen",
+};

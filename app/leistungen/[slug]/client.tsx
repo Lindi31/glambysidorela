@@ -1,211 +1,135 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { Clock, Euro, ArrowLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { PortableText } from "@portabletext/react"
+import { PortableText, type PortableTextBlock } from "@portabletext/react"
+import { DetailHero, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
+import { Pill } from "@/components/ownui/Pill"
+import { RefillReminder } from "@/components/ownui/TrainingExtras"
+import { BERATUNG_HREF } from "@/lib/offers"
+import { CATEGORY_LABELS, whatsappUrl } from "@/lib/site"
 import { urlFor } from "@/sanity/lib/image"
 
-const categoryLabels: Record<string, string> = {
-  lashes: "Lashes",
-  brows: "Brows",
-  pmu: "Permanent Make-up",
-  makeup: "Make-up",
-  facial: "Gesichtsbehandlungen",
+type SanityImage = Parameters<typeof urlFor>[0] & { asset?: { _ref?: string } }
+
+type Service = {
+  title: string
+  category?: string | null
+  shortDescription?: string | null
+  description?: PortableTextBlock[] | null
+  priceFrom?: number | null
+  duration?: number | null
+  image?: SanityImage | null
+  gallery?: SanityImage[] | null
+  calcomEventType?: string | null
 }
 
-export function ServiceDetail({ service }: { service: any }) {
+const STEPS = [
+  { title: "Online buchen", text: "Wunschtermin wählen. Die Bestätigung kommt sofort per E-Mail." },
+  { title: "Kurze Beratung", text: "Wir stimmen ab, welcher Look zu dir und deinem Alltag passt." },
+  { title: "Behandlung und Pflege", text: "Du lehnst dich zurück. Danach bekommst du Tipps, damit dein Ergebnis lange schön bleibt." },
+]
+
+type Related = { _id: string; title: string; slug: string; priceFrom?: number | null }
+
+export function ServiceDetail({ service, related }: { service: Service; related: Related[] }) {
   const bookingHref = service.calcomEventType
     ? `/termin?event=${service.calcomEventType}`
-    : "/termin"
+    : service.category ? `/termin?behandlung=${service.category}` : "/termin"
+  const whatsapp = whatsappUrl(`Hallo Sidorela, ich habe eine Frage zu ${service.title}.`)
+  const photos = [service.image, ...(service.gallery ?? [])].filter((photo): photo is SanityImage => Boolean(photo?.asset?._ref))
+  const meta = [
+    ...(service.priceFrom ? [`ab ${service.priceFrom} €`] : []),
+    ...(service.duration ? [`${service.duration} Minuten`] : []),
+  ]
 
   return (
-    <article className="relative bg-cream overflow-hidden">
-      {/* Hero */}
-      <div className="relative pt-20 min-h-[60vh] flex items-end pb-16 overflow-hidden">
-        {service.image ? (
-          <>
-            <div className="absolute inset-0">
-              <Image
-                src={urlFor(service.image).width(1400).height(800).url()}
-                alt={service.title}
-                fill
-                priority
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
-            </div>
-            <div className="relative mx-auto max-w-7xl px-6 lg:px-10 w-full">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-                {/* Breadcrumb */}
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-cream/60 text-xs mb-6">
-                  <Link href="/" className="hover:text-cream transition-colors">Home</Link>
-                  <ChevronRight size={12} />
-                  <Link href="/leistungen" className="hover:text-cream transition-colors">Leistungen</Link>
-                  <ChevronRight size={12} />
-                  <span className="text-cream/90">{service.title}</span>
-                </nav>
-                <div className="text-xs tracking-[0.2em] uppercase text-rose mb-3">
-                  {categoryLabels[service.category] ?? service.category}
-                </div>
-                <h1 className="font-display text-5xl md:text-7xl text-cream leading-tight mb-6">{service.title}</h1>
-                <div className="flex flex-wrap items-center gap-6 text-cream/80 text-sm">
-                  {service.priceFrom && (
-                    <span className="flex items-center gap-2">
-                      <Euro size={16} className="text-rose" />
-                      ab {service.priceFrom} €
-                    </span>
-                  )}
-                  {service.duration && (
-                    <span className="flex items-center gap-2">
-                      <Clock size={16} className="text-rose" />
-                      {service.duration} Minuten
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-          </>
-        ) : (
-          <div className="mx-auto max-w-7xl px-6 lg:px-10 w-full pt-32">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              {/* Breadcrumb */}
-              <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-charcoal/50 text-xs mb-6">
-                <Link href="/" className="hover:text-charcoal transition-colors">Home</Link>
-                <ChevronRight size={12} />
-                <Link href="/leistungen" className="hover:text-charcoal transition-colors">Leistungen</Link>
-                <ChevronRight size={12} />
-                <span className="text-charcoal/80">{service.title}</span>
-              </nav>
-              <Link
-                href="/leistungen"
-                className="inline-flex items-center gap-2 text-charcoal/50 hover:text-charcoal text-sm mb-6 transition-colors"
-              >
-                <ArrowLeft size={16} /> Alle Leistungen
-              </Link>
-              <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-3">
-                {categoryLabels[service.category] ?? service.category}
-              </div>
-              <h1 className="font-display text-5xl md:text-7xl text-charcoal leading-tight mb-6">{service.title}</h1>
-              <div className="flex flex-wrap items-center gap-6 text-charcoal/60 text-sm">
-                {service.priceFrom && (
-                  <span className="flex items-center gap-2">
-                    <Euro size={16} className="text-rose" />
-                    ab {service.priceFrom} €
-                  </span>
-                )}
-                {service.duration && (
-                  <span className="flex items-center gap-2">
-                    <Clock size={16} className="text-rose" />
-                    {service.duration} Minuten
-                  </span>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </div>
+    <article className="bg-cream">
+      <DetailHero
+        crumbs={[{ href: "/leistungen", label: "Leistungen" }]}
+        current={service.title}
+        kicker={service.category ? CATEGORY_LABELS[service.category] : null}
+        title={service.title}
+        lead={service.shortDescription}
+        meta={meta}
+      />
 
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20 grid lg:grid-cols-[1fr_360px] gap-16 items-start">
-        {/* Left */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="space-y-12"
-        >
+      <div className={`${pageShell} grid items-start gap-10 py-14 md:py-20 lg:grid-cols-[1fr_360px] lg:gap-16`}>
+        <div className="flex min-w-0 flex-col gap-14">
           {service.description && (
-            <div className="prose prose-lg max-w-none text-charcoal/80 prose-headings:font-display prose-headings:text-charcoal prose-strong:text-charcoal">
+            <div className="rich-text">
               <PortableText value={service.description} />
             </div>
           )}
 
-          {service.gallery && service.gallery.length > 0 && (
-            <div>
-              <h2 className="font-display text-3xl text-charcoal mb-8">Galerie</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {service.gallery.filter((img: any) => img?.asset?._ref).map((img: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.06 }}
-                    className="aspect-square rounded-2xl overflow-hidden bg-nude/20"
-                  >
-                    <Image
-                      src={urlFor(img).width(400).height(400).url()}
-                      alt={`${service.title} – Bild ${i + 1}`}
-                      width={400}
-                      height={400}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                    />
-                  </motion.div>
+          {photos.length > 0 && (
+            <section>
+              <h2 className={sectionTitle}>Einblicke</h2>
+              <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+                {photos.map((photo, index) => (
+                  <li key={index} className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-nude/30">
+                    <Image src={urlFor(photo).width(600).height(750).url()} alt={`${service.title}, Bild ${index + 1}`} fill sizes="(max-width: 768px) 45vw, 260px" className="object-cover" />
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </section>
           )}
-        </motion.div>
 
-        {/* Right: Booking sidebar (desktop) */}
-        <motion.aside
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="hidden lg:block"
-        >
-          <div className="rounded-3xl bg-white border border-nude/60 p-8 sticky top-28">
-            <h3 className="font-display text-2xl text-charcoal mb-2">Jetzt buchen</h3>
-            <p className="text-sm text-charcoal/60 mb-6">Wähle direkt deinen Wunschtermin.</p>
+          <section>
+            <h2 className={sectionTitle}>So läuft dein Termin ab</h2>
+            <ol className="mt-6 flex flex-col gap-2">
+              {STEPS.map((step, index) => (
+                <li key={step.title} className="flex gap-5 rounded-2xl bg-white p-5 md:p-6">
+                  <span aria-hidden className="font-display text-[32px] leading-none text-gold-accent">{index + 1}</span>
+                  <span>
+                    <span className="block text-[17px] font-medium text-charcoal">{step.title}</span>
+                    <span className="mt-1 block text-[15px] leading-snug text-charcoal/75">{step.text}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
 
-            {service.priceFrom && (
-              <div className="flex items-center justify-between py-3 border-b border-nude/50">
-                <span className="text-sm text-charcoal/60">Preis ab</span>
-                <span className="font-medium text-charcoal">{service.priceFrom} €</span>
-              </div>
-            )}
-            {service.duration && (
-              <div className="flex items-center justify-between py-3 border-b border-nude/50 mb-6">
-                <span className="text-sm text-charcoal/60">Dauer</span>
-                <span className="font-medium text-charcoal">{service.duration} Min.</span>
-              </div>
-            )}
+          {service.category && ["lashes", "brows"].includes(service.category) && <RefillReminder treatment={service.title} />}
 
-            <div className="mt-6 flex flex-col gap-3">
-              <Button asChild className="w-full bg-rose hover:bg-mauve text-cream rounded-full h-12 text-base">
-                <Link href={bookingHref}>Termin buchen</Link>
-              </Button>
-              <a
-                href="https://wa.me/4915252609602"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-full h-12 rounded-full border border-charcoal/20 text-charcoal/70 hover:border-rose hover:text-rose transition-colors text-sm"
-              >
-                Fragen per WhatsApp
-              </a>
-            </div>
-          </div>
-        </motion.aside>
+          {related.length > 0 && (
+            <section>
+              <h2 className={sectionTitle}>Passt auch dazu</h2>
+              <ul className="mt-6 grid gap-2 sm:grid-cols-3">
+                {related.map((item) => (
+                  <li key={item._id}>
+                    <Link href={`/leistungen/${item.slug}`} className="flex h-full min-h-32 flex-col justify-between gap-4 rounded-2xl bg-white p-5 transition-transform duration-700 ease-out hover:scale-[1.01]">
+                      <span className="font-display text-[26px] leading-[1.05] tracking-[-0.012em] text-charcoal">{item.title}</span>
+                      {item.priceFrom && <span className="text-[15px] font-medium text-charcoal">ab {item.priceFrom} €</span>}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+
+        <aside className={`${cardClass} hidden flex-col gap-3 p-7 lg:sticky lg:top-20 lg:flex`}>
+          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">Dein Termin</h2>
+          {meta.length > 0 && <p className="mb-2 text-[15px] text-charcoal/75">{meta.join(", ")}</p>}
+          <Pill href={bookingHref}>Termin buchen</Pill>
+          <Pill href={BERATUNG_HREF} variant="outline">Kostenlose Beratung</Pill>
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center text-[15px] font-medium text-charcoal underline-offset-4 hover:underline">
+            Fragen per WhatsApp
+          </a>
+        </aside>
       </div>
 
-      {/* Mobile sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-cream/95 backdrop-blur-sm border-t border-nude/40 px-6 py-4 flex gap-3">
-        <a
-          href="https://wa.me/4915252609602"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center h-12 rounded-full border border-charcoal/20 text-charcoal/70 hover:border-rose hover:text-rose transition-colors text-sm"
-        >
-          WhatsApp
-        </a>
-        <Button asChild className="flex-1 bg-rose hover:bg-mauve text-cream rounded-full h-12 text-base">
-          <Link href={bookingHref}>Termin buchen</Link>
-        </Button>
+      <p className={`${pageShell} pb-24 lg:pb-16`}>
+        <Link href="/leistungen" className="inline-flex min-h-11 items-center text-[15px] font-medium text-charcoal underline underline-offset-4">Alle Leistungen ansehen</Link>
+      </p>
+
+      {/* Am Handy immer erreichbar, führt direkt zur passenden Buchung */}
+      <div className="site-bar fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2 rounded-full bg-cream/80 p-1.5 shadow-[0_10px_40px_rgba(44,40,38,.22)] backdrop-blur-xl lg:hidden">
+        <Link href={bookingHref} className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-charcoal px-4 text-[15px] font-medium text-cream">
+          Termin buchen
+        </Link>
+        <Link href={BERATUNG_HREF} className="flex min-h-12 items-center justify-center rounded-full px-4 text-[14px] font-medium text-charcoal">
+          Beratung
+        </Link>
       </div>
     </article>
   )
