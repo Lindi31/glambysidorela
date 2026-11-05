@@ -25,7 +25,7 @@ export const SITE = {
   shortName: "Sidorela Isa",
   owner: "Sidorela Isa",
   url: SITE_URL,
-  email: "kontakt@glambysidorela.de",
+  email: "kontakt@sidorelaisa.de",
   phone: "+4915252609602",
   phoneDisplay: "+49 1525 2609602",
   whatsapp: "4915252609602",

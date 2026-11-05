@@ -23,8 +23,8 @@ export async function POST(req: Request) {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
-      from: "Sidorela Isa Beauty Studio <onboarding@resend.dev>",
-      to: process.env.CONTACT_EMAIL ?? "kontakt@glambysidorela.de",
+      from: process.env.RESEND_FROM ?? "Sidorela Isa Beauty Studio <onboarding@resend.dev>",
+      to: process.env.CONTACT_EMAIL ?? "kontakt@sidorelaisa.de",
       replyTo: email,
       subject: `Neue Anfrage von ${name}`,
       html: `

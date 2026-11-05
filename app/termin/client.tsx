@@ -36,7 +36,7 @@ function calendarFile(item: Bookable, place: SiteLocation, start: string) {
   const to = new Date(from.getTime() + item.minutes * 60_000);
   const lines = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sidorela Isa Beauty Studio//DE", "BEGIN:VEVENT",
-    `UID:${stamp(from)}@glambysidorela.de`, `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(from)}`, `DTEND:${stamp(to)}`,
+    `UID:${stamp(from)}@sidorelaisa.de`, `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(from)}`, `DTEND:${stamp(to)}`,
     `SUMMARY:${item.title} bei ${SITE.name}`, `LOCATION:${place.street}\\, ${place.postalCode} ${place.city}`,
     "END:VEVENT", "END:VCALENDAR",
   ];
