@@ -197,7 +197,7 @@ export async function ServiceDetail({ service, related }: { service: Service; re
       </div>
 
       {/* Am Handy immer erreichbar, führt direkt zur passenden Buchung */}
-      <div className="site-bar fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2 rounded-full bg-cream/80 p-1.5 shadow-[0_10px_40px_rgba(44,40,38,.22)] backdrop-blur-xl lg:hidden">
+      <div className="site-bar fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex items-center gap-2 rounded-full bg-cream/95 p-1.5 shadow-[0_10px_40px_rgba(44,40,38,.22)] lg:hidden">
         <Link href={bookingHref} className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-charcoal px-4 text-[15px] font-medium text-cream">
           {bookLabel}
         </Link>

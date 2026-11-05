@@ -28,11 +28,11 @@ export function Header() {
   useEffect(() => {
     const stage = document.getElementById("hero-stage");
     if (!stage) return;
+    // Beim bewegten Hero steuert CSS die Farbe, hier braucht es dann keinen Scroll-Code.
+    if (getComputedStyle(stage).getPropertyValue("--hero-pinned").trim() === "1") return;
     const update = () => {
-      const until = stage.dataset.static
-        ? stage.offsetHeight - 56
-        : (stage.offsetHeight - window.innerHeight) * 0.55;
-      setOver({ path: pathname, dark: window.scrollY < until });
+      const dark = window.scrollY < stage.offsetHeight - 56;
+      setOver((current) => (current.path === pathname && current.dark === dark ? current : { path: pathname, dark }));
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -63,9 +63,10 @@ export function Header() {
 
   return (
     <header
+      data-open={open}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 backdrop-blur-xl transition-colors duration-500",
-        dark ? "bg-charcoal/60 text-cream" : "bg-cream/75 text-charcoal",
+        "site-header fixed inset-x-0 top-0 z-50 transition-colors duration-500 md:backdrop-blur-xl",
+        dark ? "bg-charcoal/90 text-cream md:bg-charcoal/60" : "bg-cream/90 text-charcoal md:bg-cream/75",
       )}
     >
       <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-6 px-5 lg:px-8">
@@ -93,7 +94,7 @@ export function Header() {
           <Link
             href="/termin"
             className={cn(
-              "hidden min-h-9 items-center whitespace-nowrap rounded-full px-4 text-[13px] font-medium transition-colors duration-500 sm:inline-flex",
+              "site-header-cta hidden min-h-9 items-center whitespace-nowrap rounded-full px-4 text-[13px] font-medium transition-colors duration-500 sm:inline-flex",
               dark ? "bg-cream text-charcoal" : "bg-charcoal text-cream",
             )}
           >

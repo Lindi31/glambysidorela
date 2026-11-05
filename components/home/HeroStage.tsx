@@ -1,9 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useReducedMotion, useTransform } from "framer-motion";
-import { useSectionProgress } from "./useSectionProgress";
 import { Pill } from "@/components/ownui/Pill";
 import { BERATUNG_HREF } from "@/lib/offers";
 
@@ -29,63 +24,32 @@ function Copy({ kicker, headline }: Props) {
   );
 }
 
-function Portrait({ image }: { image: string }) {
-  return (
-    <>
-      <div className={`absolute inset-0 overflow-hidden ${ARCH}`}>
-        <Image src={image} alt={ALT} fill preload sizes="(max-width: 768px) 82vw, 620px" className="object-cover object-top" />
-      </div>
-      <svg aria-hidden viewBox="0 0 110 135" className="pointer-events-none absolute -left-[5%] -top-[4%] h-[108%] w-[110%] overflow-visible">
-        <path
-          className="ring-light"
-          pathLength={1}
-          d="M1.5 92 V55 A53.5 53.5 0 0 1 108.5 55 V92"
-          fill="none"
-          stroke="#FFF1D6"
-          strokeWidth=".45"
-          strokeLinecap="round"
-        />
-      </svg>
-    </>
-  );
-}
-
+// Die Bewegung läuft komplett in CSS (globals.css, "Hero"): Der Browser führt sie direkt
+// beim Scrollen aus, ohne JavaScript. Alte Browser zeigen stattdessen eine ruhige Fassung.
 export function HeroStage({ kicker, headline, image }: Props & { image: string }) {
-  const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const scrollYProgress = useSectionProgress(ref, ["start start", "end end"]);
-
-  // Die Bewegung läuft bis zum Ende des Abschnitts, damit kein Wischen ins Leere geht.
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const copyY = useTransform(scrollYProgress, [0, 0.4], [0, -48]);
-  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
-  const darkness = useTransform(scrollYProgress, [0.35, 0.95], [1, 0]);
-
-  if (reduce) {
-    return (
-      <section id="hero-stage" data-static="true" className="bg-charcoal pb-16 pt-28">
-        <Copy kicker={kicker} headline={headline} />
-        <div className="relative mx-auto mt-12 aspect-[4/5] w-[min(78vw,420px)]">
-          <Portrait image={image} />
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section id="hero-stage" ref={ref} className="relative h-[165svh] bg-cream md:h-[240svh]">
-      <div className="sticky top-0 h-svh overflow-hidden">
-        <motion.div aria-hidden style={{ opacity: darkness }} className="absolute inset-0 bg-charcoal" />
-        <motion.div
-          style={{ y: photoY, scale: photoScale }}
-          className="absolute bottom-[-10svh] left-1/2 z-10 aspect-[4/5] w-[min(92vw,66svh)] origin-bottom md:bottom-[-33svh] -translate-x-1/2 will-change-transform"
-        >
-          <Portrait image={image} />
-        </motion.div>
-        <motion.div style={{ opacity: copyOpacity, y: copyY }} className="absolute inset-x-0 top-[calc(3.5rem+4svh)] z-20">
+    <section id="hero-stage" className="hero-stage">
+      <div className="hero-pin">
+        <div aria-hidden className="hero-dark" />
+        <div className="hero-photo">
+          <div className={`absolute inset-0 overflow-hidden ${ARCH}`}>
+            <Image src={image} alt={ALT} fill preload sizes="(max-width: 768px) 92vw, 620px" className="object-cover object-top" />
+          </div>
+          <svg aria-hidden viewBox="0 0 110 135" className="pointer-events-none absolute -left-[5%] -top-[4%] h-[108%] w-[110%] overflow-visible">
+            <path
+              className="ring-light"
+              pathLength={1}
+              d="M1.5 92 V55 A53.5 53.5 0 0 1 108.5 55 V92"
+              fill="none"
+              stroke="#FFF1D6"
+              strokeWidth=".45"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        <div className="hero-copy">
           <Copy kicker={kicker} headline={headline} />
-        </motion.div>
+        </div>
       </div>
     </section>
   );

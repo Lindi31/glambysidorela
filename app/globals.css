@@ -172,6 +172,7 @@
   filter: drop-shadow(0 0 1.2px rgba(255, 233, 196, .95)) drop-shadow(0 0 6px rgba(255, 226, 188, .7));
   animation: ring-draw 2.2s cubic-bezier(.65, 0, .25, 1) .15s both;
   @media (prefers-reduced-motion: reduce) { animation: none; stroke-dashoffset: 0; }
+  @media (max-width: 767px) { filter: none; } /* Der Leuchteffekt ist am Handy zu teuer. */
 }
 
 .ring-soft {
@@ -189,6 +190,123 @@
       animation-range: entry 0% entry 55%;
     }
   }
+}
+
+/* Hero: Grundfassung ohne Bewegung, für alte Browser und "weniger Bewegung". */
+.hero-stage { background: #2C2826; padding: 7rem 0 4rem; }
+.hero-pin { display: flex; flex-direction: column; }
+.hero-copy { order: -1; }
+.hero-dark { display: none; }
+.hero-photo { position: relative; margin: 3rem auto 0; aspect-ratio: 4 / 5; width: min(78vw, 420px); }
+
+/* Hero mit Bewegung: läuft nativ im Browser und bleibt dadurch auch am iPhone flüssig.
+   lvh statt svh, damit beim Einklappen der Safari-Leiste unten kein heller Streifen entsteht. */
+@supports (animation-timeline: scroll()) and (animation-range: 0% 100%) and (timeline-scope: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root:has(.hero-stage) { timeline-scope: --hero; }
+
+    .hero-stage {
+      --hero-pinned: 1;
+      background: #FAF7F2;
+      height: 240lvh;
+      padding: 0;
+      view-timeline: --hero block;
+    }
+
+    .hero-pin { display: block; height: 100lvh; overflow: hidden; position: sticky; top: 0; }
+
+    .hero-dark {
+      animation: hero-dark linear both;
+      animation-range: contain 35% contain 90%;
+      animation-timeline: --hero;
+      background: #2C2826;
+      display: block;
+      inset: 0;
+      position: absolute;
+      will-change: opacity;
+    }
+
+    .hero-photo {
+      animation: hero-photo linear both;
+      animation-range: contain 0% contain 100%;
+      animation-timeline: --hero;
+      bottom: calc(100lvh - 110svh);
+      left: 50%;
+      margin: 0;
+      position: absolute;
+      transform-origin: bottom;
+      translate: -50% 0;
+      width: min(92vw, 66svh);
+      will-change: transform;
+      z-index: 10;
+    }
+
+    .hero-copy {
+      animation: hero-copy linear both;
+      animation-range: contain 0% contain 40%;
+      animation-timeline: --hero;
+      inset-inline: 0;
+      position: absolute;
+      top: calc(3.5rem + 4svh);
+      will-change: opacity, transform;
+      z-index: 20;
+    }
+
+    /* Unsichtbare Buttons dürfen keine Klicks mehr annehmen. */
+    .hero-copy a {
+      animation: hero-off step-end both;
+      animation-range: contain 0% contain 40%;
+      animation-timeline: --hero;
+    }
+
+    /* Die Navigation wechselt die Farbe genau mit dem Hintergrund. */
+    :root:has(.hero-stage) .site-header[data-open="false"] {
+      animation: hero-header linear both;
+      animation-range: contain 55% contain 70%;
+      animation-timeline: --hero;
+      backdrop-filter: none;
+      transition: none;
+    }
+
+    :root:has(.hero-stage) .site-header[data-open="false"] .site-header-cta {
+      animation: hero-header-cta linear both;
+      animation-range: contain 55% contain 70%;
+      animation-timeline: --hero;
+      transition: none;
+    }
+
+    @media (min-width: 768px) {
+      .hero-photo { bottom: calc(100lvh - 133svh); }
+    }
+
+    /* Statement: beginnt bei 85 % Bildschirmhöhe und ist fertig, wenn das Ende bei 55 % steht. */
+    .statement-text { view-timeline: --statement block; }
+
+    .statement-text span {
+      animation: statement-word linear both;
+      animation-range:
+        cover calc(15vh + (100% - 70vh) * var(--from))
+        cover calc(15vh + (100% - 70vh) * var(--to));
+      animation-timeline: --statement;
+    }
+  }
+}
+
+@keyframes statement-word { from { opacity: .18; } }
+@keyframes hero-dark { to { opacity: 0; } }
+@keyframes hero-photo {
+  from { transform: translateY(0) scale(.86); }
+  to { transform: translateY(-30%) scale(1); }
+}
+@keyframes hero-copy { to { opacity: 0; transform: translateY(-48px); } }
+@keyframes hero-off { to { visibility: hidden; } }
+@keyframes hero-header {
+  from { background-color: rgb(44 40 38 / 0); color: #FAF7F2; }
+  to { background-color: rgb(250 247 242 / .92); color: #2C2826; }
+}
+@keyframes hero-header-cta {
+  from { background-color: #FAF7F2; color: #2C2826; }
+  to { background-color: #2C2826; color: #FAF7F2; }
 }
 
 @keyframes step-in { from { opacity: 0; transform: translateY(14px); } }
