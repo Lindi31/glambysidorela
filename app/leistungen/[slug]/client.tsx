@@ -48,7 +48,7 @@ export async function ServiceDetail({ service, related }: { service: Service; re
   const priceText = service.priceFrom ? `ab ${service.priceFrom} €` : "Preis auf Anfrage"
   const facts = [
     { label: "Preis", value: priceText },
-    ...(service.duration ? [{ label: "Dauer", value: `${service.duration} Minuten` }] : []),
+    ...(service.duration ? [{ label: "Dauer", value: `${service.duration} Min.` }] : []),
     ...(service.lasts ? [{ label: "Hält", value: service.lasts }] : []),
   ]
 
@@ -66,7 +66,7 @@ export async function ServiceDetail({ service, related }: { service: Service; re
             <Image src={urlFor(heroPhoto).width(900).height(1125).url()} alt={service.title} fill preload sizes="(max-width: 768px) 92vw, 440px" className="object-cover" />
           </div>
         ) : (
-          <ServiceLine slug={service.slug} category={service.category} color="#C9A96E" strokeWidth={0.7} animated className="w-[150px] md:ml-auto md:w-full md:max-w-[420px]" />
+          <ServiceLine slug={service.slug} category={service.category} color="#C9A96E" strokeWidth={0.7} animated className="-mb-5 -mt-3 w-[132px] md:my-0 md:ml-auto md:w-full md:max-w-[420px]" />
         )}
       />
 

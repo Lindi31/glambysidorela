@@ -43,14 +43,14 @@ export function DetailHero({ crumbs, current, kicker, title, lead, meta, facts, 
           <div className="mt-6 grid items-center gap-6 md:mt-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-12">
             <div className="min-w-0">
               {kicker && <p className="text-[15px] text-gold">{kicker}</p>}
-              <h1 className="mt-2 text-balance font-display text-[clamp(40px,6.4vw,84px)] leading-[1] tracking-[-0.024em] [hyphens:manual]">{title}</h1>
+              <h1 className="mt-2 text-balance font-display text-[clamp(32px,10.4vw,46px)] leading-[1] tracking-[-0.024em] md:text-[clamp(46px,6.4vw,84px)]">{title}</h1>
               {lead && <p className="mt-5 max-w-[30em] text-[17px] leading-snug text-cream/80 md:text-[20px]">{lead}</p>}
               {facts && facts.length > 0 && (
-                <dl className="mt-7 flex flex-wrap gap-x-9 gap-y-4 border-t border-cream/15 pt-5 md:mt-9 md:gap-x-12">
+                <dl className="mt-7 flex flex-wrap gap-x-5 gap-y-3 border-t border-cream/15 pt-5 md:mt-9 md:gap-x-12">
                   {facts.map((fact) => (
                     <div key={fact.label}>
                       <dt className="text-[13px] text-cream/70">{fact.label}</dt>
-                      <dd className="mt-0.5 font-display text-[26px] leading-tight tracking-[-0.01em] md:text-[32px]">{fact.value}</dd>
+                      <dd className="mt-0.5 font-display text-[24px] leading-tight tracking-[-0.01em] md:text-[32px]">{fact.value}</dd>
                     </div>
                   ))}
                 </dl>
