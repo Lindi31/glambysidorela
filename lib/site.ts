@@ -1,7 +1,7 @@
 // Zentrale Geschäftsdaten: überall gleich = wichtig für lokales SEO (Name, Adresse, Telefon).
 
-// Nach dem Domain-Wechsel in Vercel SITE_URL=https://www.sidorelaisa.de setzen.
-export const SITE_URL = (process.env.SITE_URL ?? "https://www.glambysidorela.de").replace(/\/$/, "");
+// Hauptdomain der Website: Canonical, Sitemap, robots.txt und Google-Daten bauen darauf auf.
+export const SITE_URL = "https://www.sidorelaisa.de";
 
 export type SiteLocation = {
   slug: "bruchsal" | "juelich";
