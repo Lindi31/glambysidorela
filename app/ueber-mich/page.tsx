@@ -4,10 +4,11 @@ import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
 import { CtaBooking } from "@/components/ownui/CtaBooking"
 import type { Metadata } from "next"
-import { UeberMichView } from "./client"
+import { UeberMichView, type About } from "./client"
 
 export const metadata: Metadata = {
-  title: "Über mich – GlamBySidorela",
+  title: "Über Sidorela Isa, Lash- und PMU-Artist",
+  alternates: { canonical: "/ueber-mich" },
   description:
     "Lern Sidorela Isa kennen – zertifizierte Lash- und Make-up-Artistin aus Bruchsal. Erfahre mehr über ihre Leidenschaft, Ausbildung und Philosophie.",
 }
@@ -24,7 +25,7 @@ export default async function UeberMichPage() {
     <>
       <Header />
       <main>
-        <UeberMichView about={about} />
+        <UeberMichView about={about as About} />
         <CtaBooking />
       </main>
       <Footer />

@@ -4,22 +4,44 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BERATUNG_HREF } from "@/lib/offers";
+import { Logo } from "@/components/ownui/Logo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/leistungen", label: "Leistungen" },
-  { href: "/schulungen", label: "Schulungen" },
   { href: "/galerie", label: "Galerie" },
+  { href: "/brautpaket", label: "Brautpaket" },
+  { href: "/schulungen", label: "Academy" },
+  { href: "/gutschein", label: "Gutscheine" },
+  { href: "/shop", label: "Pflege" },
   { href: "/ueber-mich", label: "Über mich" },
-  { href: "/kontakt", label: "Kontakt" },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [over, setOver] = useState({ path: "", dark: false });
   const pathname = usePathname();
-  const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // Über dunklen Kopfbereichen wird die Navigation hell.
+  useEffect(() => {
+    const stage = document.getElementById("hero-stage");
+    if (!stage) return;
+    const update = () => {
+      const until = stage.dataset.static
+        ? stage.offsetHeight - 56
+        : (stage.offsetHeight - window.innerHeight) * 0.55;
+      setOver({ path: pathname, dark: window.scrollY < until });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -30,86 +52,86 @@ export function Header() {
       }
     };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const dark = over.path === pathname && over.dark && !open;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-cream/80 backdrop-blur-md border-b border-nude/40">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 h-20 flex items-center justify-between">
-        <Link href="/" className="font-display text-2xl tracking-wide text-charcoal">
-          Glam<span className="text-rose">By</span>Sidorela
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 backdrop-blur-xl transition-colors duration-500",
+        dark ? "bg-charcoal/60 text-cream" : "bg-cream/75 text-charcoal",
+      )}
+    >
+      <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between gap-6 px-5 lg:px-8">
+        <Link href="/" onClick={() => setOpen(false)} aria-label="Sidorela Isa Beauty Studio und Academy, zur Startseite" className="flex min-h-11 items-center">
+          <Logo />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-10" aria-label="Hauptnavigation">
+        <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Hauptnavigation">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
+              aria-current={pathname.startsWith(link.href) ? "page" : undefined}
               className={cn(
-                "text-sm transition-colors relative pb-0.5",
-                isActive(link.href)
-                  ? "text-rose font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-rose"
-                  : "text-charcoal/80 hover:text-rose"
+                "flex min-h-11 items-center text-[13px] tracking-[-0.005em] transition-opacity duration-300 hover:opacity-100",
+                pathname.startsWith(link.href) ? "font-medium opacity-100" : "opacity-80",
               )}
-              aria-current={isActive(link.href) ? "page" : undefined}
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden md:block">
-          <Button asChild className="bg-rose hover:bg-mauve text-cream rounded-full px-6">
-            <Link href="/termin">Termin buchen</Link>
-          </Button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/termin"
+            className={cn(
+              "hidden min-h-9 items-center whitespace-nowrap rounded-full px-4 text-[13px] font-medium transition-colors duration-500 sm:inline-flex",
+              dark ? "bg-cream text-charcoal" : "bg-charcoal text-cream",
+            )}
+          >
+            Termin buchen
+          </Link>
+          <button
+            ref={toggleRef}
+            className="-mr-2.5 flex size-11 items-center justify-center lg:hidden"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Menü schließen" : "Menü öffnen"}
+          >
+            {open ? <X size={22} strokeWidth={1.5} aria-hidden /> : <Menu size={22} strokeWidth={1.5} aria-hidden />}
+          </button>
         </div>
-
-        <button
-          ref={toggleRef}
-          className="md:hidden text-charcoal p-2 rounded-lg hover:bg-nude/30 transition-colors"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Menü schließen" : "Menü öffnen"}
-        >
-          {open ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
-        </button>
       </div>
 
-      <div
-        id="mobile-menu"
-        ref={menuRef}
-        role="dialog"
-        aria-modal="false"
-        aria-label="Mobile Navigation"
-        className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 bg-cream border-t border-nude/40",
-          open ? "max-h-96" : "max-h-0"
-        )}
-      >
-        <nav className="flex flex-col px-6 py-6 gap-5" aria-label="Mobile Navigation">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              aria-current={isActive(link.href) ? "page" : undefined}
-              className={cn(
-                "text-lg transition-colors",
-                isActive(link.href) ? "text-rose font-medium" : "text-charcoal/90 hover:text-rose"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Button asChild className="bg-rose hover:bg-mauve text-cream rounded-full mt-2">
-            <Link href="/termin" onClick={() => setOpen(false)}>Termin buchen</Link>
-          </Button>
-        </nav>
-      </div>
+      {open && (
+        <div id="mobile-menu" className="step-in flex h-[calc(100dvh-3.5rem)] flex-col justify-between gap-8 overflow-y-auto bg-cream px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 lg:hidden">
+          <nav className="flex flex-col" aria-label="Mobile Navigation">
+            {[...navLinks, { href: "/beauty-check", label: "Beauty-Check" }, { href: "/kontakt", label: "Kontakt" }].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className="flex min-h-[52px] items-center font-display text-[32px] leading-none tracking-[-0.015em] text-charcoal"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-col gap-2">
+            <Link href="/termin" onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-center rounded-full bg-charcoal text-[15px] font-medium text-cream">Termin buchen</Link>
+            <Link href={BERATUNG_HREF} onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-center rounded-full border border-charcoal/25 text-[15px] font-medium text-charcoal">Kostenlose Beratung</Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

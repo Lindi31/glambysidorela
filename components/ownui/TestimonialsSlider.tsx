@@ -1,9 +1,6 @@
-"use client";
+import { getTexts } from "@/lib/content";
 
-import { motion } from "framer-motion";
-import { Quote, Star } from "lucide-react";
-
-type Testimonial = {
+export type Testimonial = {
   _id: string;
   name: string | null;
   text: string | null;
@@ -11,73 +8,27 @@ type Testimonial = {
   serviceCategory: string | null;
 };
 
-export function TestimonialsSlider({ testimonials }: { testimonials: Testimonial[] }) {
+// Erscheint erst, wenn in Sanity echte Stimmen eingetragen sind.
+export async function TestimonialsSlider({ testimonials }: { testimonials: Testimonial[] }) {
   if (!testimonials.length) return null;
+  const { home } = await getTexts();
 
   return (
-    <section className="py-24 lg:py-32 bg-nude/30 relative overflow-hidden">
-      <div
-        className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full opacity-40 blur-3xl pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse, rgba(212,165,165,0.35), transparent 70%)",
-        }}
-      />
-
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-16"
-        >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">
-            — Stimmen meiner Kundinnen
-          </div>
-          <h2 className="font-display text-4xl md:text-5xl text-charcoal leading-tight">
-            Echte Erlebnisse, <span className="italic text-rose">echte Liebe.</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((t, i) => (
-            <motion.div
-              key={t._id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="relative p-8 bg-cream rounded-3xl shadow-sm hover:shadow-lg transition-shadow border border-nude/50"
-            >
-              <Quote
-                size={32}
-                className="absolute top-6 right-6 text-rose/20"
-                aria-hidden
-              />
-
-              {t.rating && (
-                <div className="flex gap-1 mb-4 text-gold" aria-label={`${t.rating} von 5 Sternen`}>
-                  {Array.from({ length: t.rating }).map((_, idx) => (
-                    <Star key={idx} size={16} fill="currentColor" aria-hidden />
-                  ))}
-                </div>
-              )}
-
-              <p className="text-charcoal/80 leading-relaxed mb-6 italic">
-                „{t.text}"
-              </p>
-
-              <div className="pt-4 border-t border-nude/60">
-                <div className="font-medium text-charcoal">{t.name}</div>
-                {t.serviceCategory && (
-                  <div className="text-xs text-charcoal/50">{t.serviceCategory}</div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+    <section className="overflow-hidden bg-cream pb-24 md:pb-36">
+      <div className="mx-auto max-w-[1200px] px-5 lg:px-8">
+        <h2 className="font-display text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-0.02em] text-charcoal">{home.testimonialsTitle}</h2>
       </div>
+      <ul className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] lg:px-[max(2rem,calc((100vw-1200px)/2+2rem))] [&::-webkit-scrollbar]:hidden">
+        {testimonials.map((testimonial) => (
+          <li key={testimonial._id} className="flex w-[82vw] max-w-[420px] flex-none snap-start scroll-ml-5 flex-col justify-between gap-8 rounded-[28px] bg-white p-7">
+            <blockquote className="font-display text-[26px] leading-[1.15] tracking-[-0.012em] text-charcoal">„{testimonial.text}“</blockquote>
+            <p className="text-[15px] text-charcoal/75">
+              <span className="font-medium text-charcoal">{testimonial.name}</span>
+              {testimonial.rating ? <span className="sr-only">, {testimonial.rating} von 5 Sternen</span> : null}
+            </p>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

@@ -1,297 +1,225 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
+import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { TreatmentLine } from "@/components/home/TreatmentLine"
+import { PageIntro, pageShell } from "@/components/ownui/PageIntro"
+import { Pill } from "@/components/ownui/Pill"
+import type { PageTexts } from "@/lib/texts"
 import { urlFor } from "@/sanity/lib/image"
-
-const categories = [
-  { value: "all", label: "Alle" },
-  { value: "lashes", label: "Lashes" },
-  { value: "brows", label: "Brows" },
-  { value: "pmu", label: "PMU" },
-  { value: "makeup", label: "Make-up" },
-  { value: "facial", label: "Gesicht" },
-]
 
 const PAGE_SIZE = 12
 
-type GalleryItem = {
+const SHORT_LABELS: Record<string, string> = {
+  lashes: "Lashes",
+  brows: "Brows",
+  pmu: "PMU",
+  makeup: "Make-up",
+  facial: "Gesicht",
+}
+
+const TONES: Record<string, { bg: string; line: string }> = {
+  lashes: { bg: "bg-charcoal", line: "#C9A96E" },
+  brows: { bg: "bg-nude/70", line: "#7A5F18" },
+  pmu: { bg: "bg-white", line: "#8F4F57" },
+  makeup: { bg: "bg-rose/45", line: "#2C2826" },
+  facial: { bg: "bg-[#EFE8DF]", line: "#7A5F18" },
+}
+
+type SanityImage = Parameters<typeof urlFor>[0] & { asset?: { _ref?: string } }
+
+export type GalleryItem = {
   _id: string
   title?: string | null
   category?: string | null
-  before?: any
-  after?: any
+  before?: SanityImage | null
+  after?: SanityImage | null
 }
 
-function Lightbox({
-  items,
-  index,
-  onClose,
-}: {
-  items: GalleryItem[]
-  index: number
-  onClose: () => void
-}) {
-  const [current, setCurrent] = useState(index)
-  const item = items[current]
+type Category = { id: string; label: string }
 
-  const prev = useCallback(() => setCurrent((i) => (i - 1 + items.length) % items.length), [items.length])
-  const next = useCallback(() => setCurrent((i) => (i + 1) % items.length), [items.length])
+const hasPair = (item: GalleryItem) => Boolean(item.before?.asset?._ref && item.after?.asset?._ref)
+const hasAfter = (item: GalleryItem) => Boolean(item.after?.asset?._ref)
+const photo = (image: SanityImage, width: number) => urlFor(image).width(width).height(Math.round(width * 1.25)).fit("crop").url()
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-      if (e.key === "ArrowLeft") prev()
-      if (e.key === "ArrowRight") next()
-    }
-    document.addEventListener("keydown", handler)
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.removeEventListener("keydown", handler)
-      document.body.style.overflow = ""
-    }
-  }, [onClose, prev, next])
+function Compare({ item }: { item: GalleryItem }) {
+  const [split, setSplit] = useState(50)
+  const title = item.title ?? "Ergebnis"
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-charcoal/95 flex items-center justify-center p-4"
-        onClick={onClose}
-      >
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 w-10 h-10 rounded-full bg-cream/10 hover:bg-cream/20 flex items-center justify-center text-cream transition-colors"
-          aria-label="Schließen"
-        >
-          <X size={20} />
-        </button>
-
-        {/* Counter */}
-        <div className="absolute top-5 left-1/2 -translate-x-1/2 text-cream/60 text-sm">
-          {current + 1} / {items.length}
-        </div>
-
-        {/* Prev */}
-        {items.length > 1 && (
-          <button
-            onClick={(e) => { e.stopPropagation(); prev() }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-cream/10 hover:bg-cream/20 flex items-center justify-center text-cream transition-colors"
-            aria-label="Vorheriges Bild"
-          >
-            <ChevronLeft size={22} />
-          </button>
-        )}
-
-        {/* Content */}
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
-          className="max-w-4xl w-full"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {item.before?.asset?._ref && item.after?.asset?._ref ? (
-            <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden">
-              <div className="relative aspect-square">
-                <Image
-                  src={urlFor(item.before).width(800).height(800).url()}
-                  alt={`${item.title ?? ""} – Vorher`}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute bottom-3 left-3 text-[10px] tracking-widest uppercase bg-charcoal/60 text-cream px-2 py-0.5 rounded-full">
-                  Vorher
-                </div>
-              </div>
-              <div className="relative aspect-square">
-                <Image
-                  src={urlFor(item.after).width(800).height(800).url()}
-                  alt={`${item.title ?? ""} – Nachher`}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute bottom-3 right-3 text-[10px] tracking-widest uppercase bg-rose/80 text-cream px-2 py-0.5 rounded-full">
-                  Nachher
-                </div>
-              </div>
-            </div>
-          ) : item.after?.asset?._ref ? (
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image
-                src={urlFor(item.after).width(1200).height(900).url()}
-                alt={item.title ?? ""}
-                fill
-                className="object-contain"
-              />
-            </div>
-          ) : null}
-
-          {item.title && (
-            <p className="text-center text-cream/70 text-sm mt-4">{item.title}</p>
-          )}
-        </motion.div>
-
-        {/* Next */}
-        {items.length > 1 && (
-          <button
-            onClick={(e) => { e.stopPropagation(); next() }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-cream/10 hover:bg-cream/20 flex items-center justify-center text-cream transition-colors"
-            aria-label="Nächstes Bild"
-          >
-            <ChevronRight size={22} />
-          </button>
-        )}
-      </motion.div>
-    </AnimatePresence>
+    <div className="relative aspect-[4/5] w-full select-none overflow-hidden rounded-[24px] bg-charcoal">
+      <Image src={photo(item.after!, 1000)} alt={`${title}, nachher`} fill sizes="(max-width: 640px) 92vw, 600px" className="object-cover" />
+      <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - split}% 0 0)` }}>
+        <Image src={photo(item.before!, 1000)} alt={`${title}, vorher`} fill sizes="(max-width: 640px) 92vw, 600px" className="object-cover" />
+      </div>
+      <span className="absolute left-3 top-3 rounded-full bg-cream/85 px-3 py-1 text-[12px] font-medium text-charcoal backdrop-blur">Vorher</span>
+      <span className="absolute right-3 top-3 rounded-full bg-cream/85 px-3 py-1 text-[12px] font-medium text-charcoal backdrop-blur">Nachher</span>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={split}
+        onChange={(event) => setSplit(Number(event.target.value))}
+        aria-label="Vorher und Nachher vergleichen"
+        className="peer absolute inset-0 z-10 m-0 h-full w-full cursor-ew-resize opacity-0"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-y-0 w-px bg-cream" style={{ left: `${split}%` }} />
+      <div aria-hidden className="pointer-events-none absolute top-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-cream text-charcoal shadow-lg peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold" style={{ left: `${split}%` }}>
+        <ChevronLeft size={15} strokeWidth={1.75} className="-mr-0.5" />
+        <ChevronRight size={15} strokeWidth={1.75} className="-ml-0.5" />
+      </div>
+    </div>
   )
 }
 
-export function GalerieGrid({ items }: { items: GalleryItem[] }) {
+function Lightbox({ items, index, onClose }: { items: GalleryItem[]; index: number; onClose: () => void }) {
+  const [current, setCurrent] = useState(index)
+  const dialog = useRef<HTMLDialogElement>(null)
+  const item = items[current]
+  const move = (step: number) => setCurrent((value) => (value + step + items.length) % items.length)
+
+  useEffect(() => {
+    const element = dialog.current
+    if (element && !element.open) element.showModal()
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [])
+
+  const roundButton = "flex size-11 items-center justify-center rounded-full bg-cream/15 text-cream transition-colors hover:bg-cream/25"
+
+  return (
+    <dialog
+      ref={dialog}
+      aria-label={item.title ?? "Bild"}
+      onClose={onClose}
+      onClick={(event) => { if (event.target === dialog.current) onClose() }}
+      onKeyDown={(event) => {
+        if ((event.target as HTMLElement).tagName === "INPUT") return
+        if (event.key === "ArrowLeft") move(-1)
+        if (event.key === "ArrowRight") move(1)
+      }}
+      className="m-0 h-dvh max-h-none w-screen max-w-none bg-charcoal/95 p-4 text-cream backdrop-blur-xl backdrop:bg-transparent"
+    >
+      <div className="mx-auto flex h-full w-full max-w-[560px] flex-col gap-3">
+        <div className="flex items-center justify-between text-[14px] text-cream/75">
+          <span>{current + 1} von {items.length}</span>
+          <button type="button" onClick={onClose} aria-label="Schließen" className={roundButton}><X size={20} strokeWidth={1.5} aria-hidden /></button>
+        </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <div key={item._id} className="step-in max-h-full w-full max-w-[min(100%,calc((100dvh-11rem)*0.8))]">
+            {hasPair(item) ? (
+              <Compare item={item} />
+            ) : (
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[24px]">
+                <Image src={photo(item.after!, 1000)} alt={item.title ?? "Ergebnis"} fill sizes="(max-width: 640px) 92vw, 600px" className="object-cover" />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex min-h-11 items-center justify-between gap-3">
+          <p className="min-w-0 truncate font-display text-[24px] leading-none">{item.title}</p>
+          {items.length > 1 && (
+            <div className="flex flex-none gap-2">
+              <button type="button" onClick={() => move(-1)} aria-label="Vorheriges Bild" className={roundButton}><ChevronLeft size={22} strokeWidth={1.5} aria-hidden /></button>
+              <button type="button" onClick={() => move(1)} aria-label="Nächstes Bild" className={roundButton}><ChevronRight size={22} strokeWidth={1.5} aria-hidden /></button>
+            </div>
+          )}
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+export function GalerieGrid({ items, t, instagram, categories }: { items: GalleryItem[]; t: PageTexts["galerie"]; instagram: string; categories: Category[] }) {
   const [active, setActive] = useState("all")
   const [visible, setVisible] = useState(PAGE_SIZE)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
-  const filtered = active === "all" ? items : items.filter((item) => item.category === active)
+  const withPhotos = items.filter(hasAfter)
+  const usedCategories = categories.filter((category) => withPhotos.some((item) => item.category === category.id))
+  const filtered = active === "all" ? withPhotos : withPhotos.filter((item) => item.category === active)
   const shown = filtered.slice(0, visible)
-  const hasMore = visible < filtered.length
+  const filters = [{ id: "all", label: "Alle" }, ...usedCategories.map((category) => ({ id: category.id, label: SHORT_LABELS[category.id] ?? category.label }))]
 
   return (
-    <section className="min-h-screen pt-32 pb-24 bg-cream">
+    <div className="bg-cream pb-24 md:pb-32">
+      <PageIntro title={t.title} lead={t.lead} />
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl mb-12"
-        >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Galerie</div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
-            Schönheit in <span className="italic text-rose">Bildern.</span>
-          </h1>
-          <p className="mt-6 text-lg text-charcoal/70 leading-relaxed">
-            Echte Ergebnisse, echte Kundinnen. Jedes Bild zeigt das Handwerk und die Liebe zum Detail.
-          </p>
-        </motion.div>
-
-        {/* Category filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-wrap gap-2 mb-12"
-        >
-          {categories.map((cat) => (
-            <button
-              key={cat.value}
-              onClick={() => { setActive(cat.value); setVisible(PAGE_SIZE) }}
-              className={`px-5 py-2 rounded-full text-sm transition-all duration-200 ${
-                active === cat.value
-                  ? "bg-rose text-cream shadow-md"
-                  : "bg-white border border-nude/60 text-charcoal/70 hover:border-rose/60 hover:text-charcoal"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </motion.div>
-
-        {filtered.length === 0 ? (
-          <div className="py-24 text-center">
-            <p className="text-charcoal/40 text-lg">Noch keine Bilder in dieser Kategorie.</p>
-          </div>
+      <div className={pageShell}>
+        {withPhotos.length === 0 ? (
+          <>
+            <div className="flex flex-col items-start gap-5 md:flex-row md:items-center md:justify-between">
+              <p className="max-w-[18em] text-balance font-display text-[clamp(30px,4vw,44px)] leading-[1.05] tracking-[-0.018em] text-charcoal">{t.empty}</p>
+              <Pill href={instagram} className="flex-none">Auf Instagram ansehen</Pill>
+            </div>
+            <ul className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4">
+              {categories.map((category) => {
+                const tone = TONES[category.id] ?? TONES.pmu
+                const dark = category.id === "lashes"
+                return (
+                  <li key={category.id}>
+                    <Link href={`/leistungen#${category.id}`} className={`group flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-[24px] p-5 transition-transform duration-700 ease-out hover:scale-[1.012] ${tone.bg} ${dark ? "text-cream" : "text-charcoal"}`}>
+                      <span className="text-[15px] font-medium">{SHORT_LABELS[category.id] ?? category.label}</span>
+                      <TreatmentLine id={category.id} color={tone.line} className="w-full transition-transform duration-700 ease-out group-hover:scale-105" />
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </>
         ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {shown.map((item, i) => (
-                <motion.div
-                  key={item._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
-                  className="rounded-2xl bg-white border border-nude/60 shadow-sm overflow-hidden cursor-pointer group hover:border-rose/40 hover:shadow-lg transition-all duration-300"
-                  onClick={() => setLightboxIndex(filtered.indexOf(item))}
-                >
-                  {item.before?.asset?._ref && item.after?.asset?._ref ? (
-                    <div className="grid grid-cols-2 gap-0">
-                      <div className="relative aspect-square bg-nude/20">
-                        <Image
-                          src={urlFor(item.before).width(400).height(400).url()}
-                          alt={`${item.title ?? ""} – Vorher`}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute bottom-2 left-2 text-[10px] tracking-widest uppercase bg-charcoal/60 text-cream px-2 py-0.5 rounded-full">
-                          Vorher
-                        </div>
-                      </div>
-                      <div className="relative aspect-square bg-nude/20">
-                        <Image
-                          src={urlFor(item.after).width(400).height(400).url()}
-                          alt={`${item.title ?? ""} – Nachher`}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute bottom-2 right-2 text-[10px] tracking-widest uppercase bg-rose/80 text-cream px-2 py-0.5 rounded-full">
-                          Nachher
-                        </div>
-                      </div>
-                    </div>
-                  ) : item.after?.asset?._ref ? (
-                    <div className="relative aspect-[4/3] bg-nude/20">
-                      <Image
-                        src={urlFor(item.after).width(600).height(450).url()}
-                        alt={item.title ?? ""}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  ) : null}
+          <>
+            {filters.length > 2 && (
+              <div role="group" aria-label="Nach Behandlung filtern" className="-mx-5 mb-8 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:px-0 [&::-webkit-scrollbar]:hidden">
+                {filters.map((filter) => (
+                  <button
+                    key={filter.id}
+                    type="button"
+                    aria-pressed={active === filter.id}
+                    onClick={() => { setActive(filter.id); setVisible(PAGE_SIZE) }}
+                    className={`min-h-11 flex-none rounded-full px-5 text-[14px] font-medium transition-colors duration-300 ${active === filter.id ? "bg-charcoal text-cream" : "bg-white text-charcoal"}`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
-                  {item.title && (
-                    <div className="px-6 py-4">
-                      <p className="text-sm font-medium text-charcoal">{item.title}</p>
-                    </div>
-                  )}
-                </motion.div>
+            <ul className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
+              {shown.map((item, index) => (
+                <li key={item._id}>
+                  <button type="button" onClick={() => setLightboxIndex(index)} aria-label={`${item.title ?? "Bild"} ansehen`} className="group block w-full text-left">
+                    <span className="relative block aspect-[4/5] overflow-hidden rounded-[20px] bg-nude/30 md:rounded-[24px]">
+                      <Image src={photo(item.after!, 800)} alt={item.title ?? "Ergebnis"} fill sizes="(max-width: 1024px) 46vw, 370px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+                      {hasPair(item) && (
+                        <>
+                          <Image src={photo(item.before!, 800)} alt="" fill sizes="(max-width: 1024px) 46vw, 370px" className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                          <span className="absolute left-2.5 top-2.5 rounded-full bg-cream/85 px-2.5 py-1 text-[11px] font-medium text-charcoal backdrop-blur md:left-3 md:top-3 md:text-[12px]">Vorher und Nachher</span>
+                        </>
+                      )}
+                    </span>
+                    {item.title && <span className="mt-2.5 block font-display text-[22px] leading-[1.1] tracking-[-0.01em] text-charcoal md:text-[26px]">{item.title}</span>}
+                  </button>
+                </li>
               ))}
-            </motion.div>
-          </AnimatePresence>
-        )}
+            </ul>
 
-        {hasMore && (
-          <div className="mt-12 text-center">
-            <button
-              onClick={() => setVisible((v) => v + PAGE_SIZE)}
-              className="px-8 py-3 rounded-full border border-charcoal/20 text-charcoal/70 hover:border-rose hover:text-rose transition-colors text-sm"
-            >
-              Mehr laden ({filtered.length - visible} weitere)
-            </button>
-          </div>
+            {visible < filtered.length && (
+              <div className="mt-10 text-center">
+                <button type="button" onClick={() => setVisible((value) => value + PAGE_SIZE)} className="min-h-12 rounded-full border border-charcoal/25 px-7 text-[15px] font-medium text-charcoal">
+                  Weitere {filtered.length - visible} Bilder laden
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {lightboxIndex !== null && (
-        <Lightbox
-          items={filtered}
-          index={lightboxIndex}
-          onClose={() => setLightboxIndex(null)}
-        />
-      )}
-    </section>
+      {lightboxIndex !== null && <Lightbox items={shown} index={lightboxIndex} onClose={() => setLightboxIndex(null)} />}
+    </div>
   )
 }

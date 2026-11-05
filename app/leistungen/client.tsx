@@ -1,121 +1,88 @@
-"use client"
-
-import Link from "next/link"
 import Image from "next/image"
-import { motion } from "framer-motion"
-import { Eye, Sparkles, Palette, Brush, Droplet, ArrowUpRight } from "lucide-react"
+import Link from "next/link"
+import { ChevronRight } from "lucide-react"
+import { Pill } from "@/components/ownui/Pill"
+import { PageIntro, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
+import { getCategories, getTexts } from "@/lib/content"
+import { BERATUNG_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
+import { ServiceLine, serviceTone } from "@/components/home/ServiceLine"
+import type { ServiceItem } from "@/lib/content"
 
-const categoryIcons: Record<string, React.ElementType> = {
-  lashes: Eye,
-  brows: Sparkles,
-  pmu: Palette,
-  makeup: Brush,
-  facial: Droplet,
+type Service = Pick<ServiceItem, "_id" | "title" | "slug" | "category" | "shortDescription" | "priceFrom" | "duration"> & {
+  image?: Parameters<typeof urlFor>[0] | null
 }
 
-const categoryLabels: Record<string, string> = {
-  lashes: "Lashes",
-  brows: "Brows",
-  pmu: "Permanent Make-up",
-  makeup: "Make-up",
-  facial: "Gesichtsbehandlungen",
-}
-
-export function LeistungenGrid({ services }: { services: any[] }) {
+function ServiceCard({ service }: { service: Service }) {
+  const tone = serviceTone(service.category)
   return (
-    <section className="min-h-screen pt-32 pb-24 bg-cream">
-
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl mb-16"
-        >
-          <div className="text-xs tracking-[0.2em] uppercase text-gold-accent mb-4">— Leistungen</div>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal leading-tight">
-            Alles für deinen <span className="italic text-rose">Glow.</span>
-          </h1>
-          <p className="mt-6 text-lg text-charcoal/70 leading-relaxed">
-            Von klassischer Wimpernverlängerung bis zum professionellen Permanent Make-up – jede Behandlung wird
-            individuell auf dich abgestimmt.
+    <li>
+      <Link href={`/leistungen/${service.slug}`} className={`${cardClass} group flex h-full overflow-hidden transition-transform duration-700 ease-out hover:scale-[1.01]`}>
+        <div className={`relative flex w-[28%] flex-none items-center justify-center overflow-hidden sm:w-[210px] ${service.image ? "bg-nude/30" : tone.bg}`}>
+          {service.image ? (
+            <Image src={urlFor(service.image).width(500).height(625).url()} alt="" fill sizes="(max-width: 640px) 28vw, 210px" className="object-cover" />
+          ) : (
+            <ServiceLine slug={service.slug} category={service.category} color={tone.line} className="w-[86%] transition-transform duration-700 ease-out group-hover:scale-105" />
+          )}
+        </div>
+        <div className="flex min-h-[176px] min-w-0 flex-1 flex-col p-4 sm:min-h-[190px] sm:p-6">
+          <h3 className="font-display text-[23px] leading-[1.05] tracking-[-0.015em] text-charcoal hyphens-auto sm:text-[30px]">{service.title}</h3>
+          {service.shortDescription && <p className="mt-1.5 flex-1 text-[14px] leading-snug text-charcoal/75 sm:mt-2 sm:text-[15px]">{service.shortDescription}</p>}
+          <p className="mt-3 flex items-center justify-between gap-2 text-[14px] font-medium text-charcoal sm:mt-5 sm:text-[15px]">
+            <span className="flex flex-wrap gap-x-3">
+              <span>{service.priceFrom ? `ab ${service.priceFrom} €` : "Preis auf Anfrage"}</span>
+              {service.duration && <span className="font-normal text-charcoal/75">{service.duration} Min.</span>}
+            </span>
+            <ChevronRight size={20} strokeWidth={1.5} aria-hidden className="flex-none transition-transform duration-500 group-hover:translate-x-1" />
           </p>
-        </motion.div>
+        </div>
+      </Link>
+    </li>
+  )
+}
 
-        {services.length === 0 ? (
-          <div className="py-24 text-center">
-            <p className="text-charcoal/40 text-lg">Noch keine Leistungen verfügbar.</p>
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service, i) => {
-              const Icon = categoryIcons[service.category] ?? Sparkles
-              return (
-                <motion.div
-                  key={service._id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: i * 0.07 }}
-                >
-                  <Link
-                    href={`/leistungen/${service.slug}`}
-                    className="group relative flex flex-col h-full rounded-2xl bg-white border border-nude/60 shadow-sm hover:border-rose/60 hover:shadow-lg transition-all duration-300 overflow-hidden"
-                  >
-                    {service.image && (
-                      <div className="w-full aspect-[3/2] overflow-hidden bg-nude/20 shrink-0">
-                        <Image
-                          src={urlFor(service.image).width(600).height(400).url()}
-                          alt={service.title}
-                          width={600}
-                          height={400}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    )}
+export async function LeistungenGrid({ services }: { services: Service[] }) {
+  const [texts, categories] = await Promise.all([getTexts(), getCategories()])
+  const groups = categories.map((category) => ({
+    id: category.id,
+    title: category.label,
+    line: category.line,
+    items: services.filter((service) => service.category === category.id),
+  })).filter((group) => group.items.length > 0)
 
-                    <div className="flex flex-col flex-1 p-8">
-                      <div
-                        className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-500 pointer-events-none"
-                        style={{ background: "radial-gradient(circle, rgba(212,165,165,0.3), transparent)" }}
-                      />
+  return (
+    <div className="bg-cream pb-24 md:pb-32">
+      <PageIntro title={texts.leistungen.title} lead={texts.leistungen.lead}>
+        <div className="mt-7 flex flex-wrap gap-3">
+          <Pill href="/beauty-check">Beauty-Check starten</Pill>
+          <Pill href={BERATUNG_HREF} variant="outline">Kostenlose Beratung</Pill>
+        </div>
+      </PageIntro>
 
-                      {!service.image && (
-                        <div className="w-14 h-14 rounded-2xl bg-nude/40 flex items-center justify-center mb-6 group-hover:bg-rose transition-colors duration-300">
-                          <Icon size={24} className="text-rose group-hover:text-cream transition-colors" />
-                        </div>
-                      )}
-
-                      <div className="text-xs tracking-wider uppercase text-gold-accent mb-2">
-                        {categoryLabels[service.category] ?? service.category}
-                      </div>
-                      <h2 className="font-display text-2xl text-charcoal mb-3">{service.title}</h2>
-                      <p className="text-sm text-charcoal/70 leading-relaxed flex-1 mb-6">
-                        {service.shortDescription}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-nude/50">
-                        <div className="flex items-center gap-4 text-sm text-charcoal/60">
-                          {service.priceFrom && (
-                            <span>
-                              ab <span className="text-charcoal font-medium">{service.priceFrom} €</span>
-                            </span>
-                          )}
-                          {service.duration && <span>{service.duration} Min.</span>}
-                        </div>
-                        <div className="w-9 h-9 rounded-full bg-nude/30 flex items-center justify-center group-hover:bg-rose group-hover:rotate-45 transition-all duration-300">
-                          <ArrowUpRight size={16} className="text-rose group-hover:text-cream transition-colors" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              )
-            })}
-          </div>
+      <div className={pageShell}>
+        {groups.length > 1 && (
+          <nav aria-label="Zu einer Kategorie springen" className="-mx-5 mb-12 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] md:mx-0 md:mb-16 md:flex-wrap md:px-0 [&::-webkit-scrollbar]:hidden">
+            {groups.map((group) => (
+              <a key={group.id} href={`#${group.id}`} className="flex min-h-11 flex-none items-center rounded-full bg-white px-5 text-[14px] font-medium text-charcoal transition-colors duration-300 hover:bg-charcoal hover:text-cream">
+                {group.title}
+              </a>
+            ))}
+          </nav>
         )}
+
+        <div className="flex flex-col gap-14 md:gap-20">
+          {groups.map((group) => (
+            <section key={group.id} id={group.id} className="scroll-mt-20">
+              <h2 className={sectionTitle}>{group.title}</h2>
+              <p className="mt-2 text-[17px] leading-snug text-charcoal/75">{group.line}</p>
+              <ul className="mt-6 grid gap-3 md:mt-7 md:gap-4 lg:grid-cols-2 lg:[&>li:last-child:nth-child(odd)]:col-span-2">
+                {group.items.map((service) => <ServiceCard key={service._id} service={service} />)}
+              </ul>
+            </section>
+          ))}
+          {groups.length === 0 && <p className="text-[17px] text-charcoal/75">{texts.leistungen.empty}</p>}
+        </div>
       </div>
-    </section>
+    </div>
   )
 }

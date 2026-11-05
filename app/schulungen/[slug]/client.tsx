@@ -1,225 +1,84 @@
-"use client"
+import { PortableText, type PortableTextBlock } from "@portabletext/react"
+import { DetailHero, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
+import { Pill } from "@/components/ownui/Pill"
+import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
+import { ERSTGESPRAECH_HREF } from "@/lib/offers"
+import { getSite, getTexts } from "@/lib/content"
+import { whatsappUrl } from "@/lib/site"
 
-import Image from "next/image"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { ArrowLeft, CheckCircle2, Clock, Calendar, MapPin, Users, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { PortableText } from "@portabletext/react"
-import { urlFor } from "@/sanity/lib/image"
-
-const levelColors: Record<string, string> = {
-  Einsteiger: "bg-nude/60 text-mauve border-nude",
-  Fortgeschritten: "bg-rose/20 text-rose border-rose/30",
-  Masterclass: "bg-gold/20 text-gold border-gold/30",
+type Training = {
+  title: string
+  level?: string | null
+  description?: PortableTextBlock[] | null
+  durationDays?: number | null
+  price?: number | null
+  includes?: string[] | null
+  upcomingDates?: { date?: string | null; location?: string | null; spotsLeft?: number | null }[] | null
 }
 
-export function TrainingDetail({ training }: { training: any }) {
-  return (
-    <article className="relative bg-cream overflow-hidden">
-      {/* Hero */}
-      <div className="relative pt-20 min-h-[55vh] flex items-end pb-16 overflow-hidden">
-        {training.image ? (
-          <>
-            <div className="absolute inset-0">
-              <Image
-                src={urlFor(training.image).width(1400).height(800).url()}
-                alt={training.title}
-                fill
-                priority
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
-            </div>
-            <div className="relative mx-auto max-w-7xl px-6 lg:px-10 w-full">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-                <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-cream/60 text-xs mb-6">
-                  <Link href="/" className="hover:text-cream transition-colors">Home</Link>
-                  <ChevronRight size={12} />
-                  <Link href="/schulungen" className="hover:text-cream transition-colors">Schulungen</Link>
-                  <ChevronRight size={12} />
-                  <span className="text-cream/90">{training.title}</span>
-                </nav>
-                {training.level && (
-                  <div className="inline-block text-xs tracking-wider uppercase px-3 py-1 rounded-full bg-rose/30 text-cream border border-rose/40 mb-4">
-                    {training.level}
-                  </div>
-                )}
-                <h1 className="font-display text-5xl md:text-7xl text-cream leading-tight mb-6">{training.title}</h1>
-                <div className="flex flex-wrap items-center gap-6 text-cream/80 text-sm">
-                  {training.durationDays && (
-                    <span className="flex items-center gap-2">
-                      <Clock size={16} className="text-rose" />
-                      {training.durationDays} {training.durationDays === 1 ? "Tag" : "Tage"}
-                    </span>
-                  )}
-                  {training.price && (
-                    <span className="flex items-center gap-2">
-                      <span className="text-rose font-medium">{training.price} €</span>
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-          </>
-        ) : (
-          <div className="mx-auto max-w-7xl px-6 lg:px-10 w-full pt-32">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-charcoal/50 text-xs mb-6">
-                <Link href="/" className="hover:text-charcoal transition-colors">Home</Link>
-                <ChevronRight size={12} />
-                <Link href="/schulungen" className="hover:text-charcoal transition-colors">Schulungen</Link>
-                <ChevronRight size={12} />
-                <span className="text-charcoal/80">{training.title}</span>
-              </nav>
-              <Link
-                href="/schulungen"
-                className="inline-flex items-center gap-2 text-charcoal/50 hover:text-charcoal text-sm mb-6 transition-colors"
-              >
-                <ArrowLeft size={16} /> Alle Schulungen
-              </Link>
-              {training.level && (
-                <div
-                  className={`inline-block text-xs tracking-wider uppercase px-3 py-1 rounded-full border mb-4 ${levelColors[training.level] ?? "bg-nude/40 text-mauve border-nude"}`}
-                >
-                  {training.level}
-                </div>
-              )}
-              <h1 className="font-display text-5xl md:text-7xl text-charcoal leading-tight mb-6">{training.title}</h1>
-            </motion.div>
-          </div>
-        )}
-      </div>
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
 
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20 grid lg:grid-cols-[1fr_360px] gap-16 items-start">
-        {/* Left */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="space-y-12"
-        >
+export async function TrainingDetail({ training }: { training: Training }) {
+  const [{ schulungen: t }, site] = await Promise.all([getTexts(), getSite()])
+  const meta = [
+    ...(training.price ? [`${training.price} €`] : []),
+    ...(training.durationDays ? [`${training.durationDays} ${training.durationDays === 1 ? "Tag" : "Tage"}`] : []),
+  ]
+
+  return (
+    <article className="bg-cream">
+      <DetailHero crumbs={[{ href: "/schulungen", label: "Academy" }]} current={training.title} kicker={training.level} title={training.title} meta={meta} />
+
+      <div className={`${pageShell} grid items-start gap-10 py-14 md:py-20 lg:grid-cols-[1fr_360px] lg:gap-16`}>
+        <div className="flex min-w-0 flex-col gap-12">
           {training.description && (
-            <div className="prose prose-lg max-w-none text-charcoal/80 prose-headings:font-display prose-headings:text-charcoal prose-strong:text-charcoal">
+            <div className="rich-text">
               <PortableText value={training.description} />
             </div>
           )}
 
           {training.includes && training.includes.length > 0 && (
-            <div>
-              <h2 className="font-display text-3xl text-charcoal mb-6">Das ist dabei</h2>
-              <ul className="space-y-3">
-                {training.includes.map((item: string, i: number) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: i * 0.06 }}
-                    className="flex items-start gap-3 text-charcoal/80"
-                  >
-                    <CheckCircle2 size={20} className="text-rose shrink-0 mt-0.5" />
-                    {item}
-                  </motion.li>
+            <section>
+              <h2 className={sectionTitle}>{t.includesTitle}</h2>
+              <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+                {training.includes.map((item) => (
+                  <li key={item} className="rounded-2xl bg-white px-5 py-4 text-[16px] text-charcoal">{item}</li>
                 ))}
               </ul>
-            </div>
+            </section>
           )}
 
           {training.upcomingDates && training.upcomingDates.length > 0 && (
-            <div>
-              <h2 className="font-display text-3xl text-charcoal mb-6">Nächste Termine</h2>
-              <div className="space-y-4">
-                {training.upcomingDates.map((date: any, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: i * 0.07 }}
-                    className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl bg-white border border-nude/60"
-                  >
-                    <div className="flex flex-wrap gap-6 text-sm">
-                      <span className="flex items-center gap-2 text-charcoal font-medium">
-                        <Calendar size={16} className="text-rose" />
-                        {new Date(date.date).toLocaleDateString("de-DE", {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </span>
-                      {date.location && (
-                        <span className="flex items-center gap-2 text-charcoal/60">
-                          <MapPin size={16} className="text-rose" />
-                          {date.location}
-                        </span>
-                      )}
-                    </div>
-                    {date.spotsLeft != null && (
-                      <span
-                        className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full ${date.spotsLeft <= 2 ? "bg-rose/20 text-rose" : "bg-nude/40 text-mauve"}`}
-                      >
-                        <Users size={12} />
-                        {date.spotsLeft} {date.spotsLeft === 1 ? "Platz" : "Plätze"} frei
-                      </span>
-                    )}
-                  </motion.div>
+            <section>
+              <h2 className={sectionTitle}>{t.datesTitle}</h2>
+              <ul className="mt-6 flex flex-col gap-2">
+                {training.upcomingDates.map((entry, index) => (
+                  <li key={index} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 rounded-2xl bg-white px-5 py-4 text-[15px] text-charcoal">
+                    <span className="font-medium">{entry.date ? formatDate(entry.date) : "Termin folgt"}</span>
+                    <span className="text-charcoal/75">
+                      {entry.location}
+                      {entry.spotsLeft != null && `, ${entry.spotsLeft} ${entry.spotsLeft === 1 ? "Platz" : "Plätze"} frei`}
+                    </span>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ul>
+            </section>
           )}
-        </motion.div>
 
-        {/* Right: Info sidebar */}
-        <motion.aside
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <div className="rounded-3xl bg-white border border-nude/60 p-8 sticky top-28">
-            <h3 className="font-display text-2xl text-charcoal mb-2">Anmelden</h3>
-            <p className="text-sm text-charcoal/60 mb-6">Interesse? Melde dich direkt bei Sidorela.</p>
+          {training.price && <TrainingCalculator fee={training.price} title={t.calculatorTitle} note={t.calculatorNote} />}
+          <TrainingWaitlist training={training.title} title={t.waitlistTitle} lead={t.waitlistLead} doneTitle={t.waitlistDoneTitle} doneText={t.waitlistDoneText} />
+        </div>
 
-            {training.price && (
-              <div className="flex items-center justify-between py-3 border-b border-nude/50">
-                <span className="text-sm text-charcoal/60">Preis</span>
-                <span className="font-medium text-charcoal">{training.price} €</span>
-              </div>
-            )}
-            {training.durationDays && (
-              <div className="flex items-center justify-between py-3 border-b border-nude/50 mb-6">
-                <span className="text-sm text-charcoal/60">Dauer</span>
-                <span className="font-medium text-charcoal">
-                  {training.durationDays} {training.durationDays === 1 ? "Tag" : "Tage"}
-                </span>
-              </div>
-            )}
-
-            <div className="mt-6 flex flex-col gap-3">
-              <a
-                href="https://wa.me/4915252609602"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-full h-12 rounded-full bg-rose hover:bg-mauve text-cream transition-colors text-sm font-medium"
-              >
-                Per WhatsApp anfragen
-              </a>
-              <Button
-                asChild
-                variant="outline"
-                className="w-full rounded-full h-12 border-charcoal/20 text-charcoal hover:border-rose hover:text-rose"
-              >
-                <a href={`mailto:kontakt@glambysidorela.de?subject=Schulung: ${training.title}`}>
-                  Per E-Mail anfragen
-                </a>
-              </Button>
-            </div>
-          </div>
-        </motion.aside>
+        <aside className={`${cardClass} order-first flex flex-col gap-3 p-6 md:p-7 lg:sticky lg:top-20 lg:order-none`}>
+          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">{t.requestTitle}</h2>
+          {meta.length > 0 && <p className="mb-2 text-[15px] text-charcoal/75">{meta.join(", ")}</p>}
+          <Pill href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für die ${training.title}.`, site.whatsapp)}>Per WhatsApp anfragen</Pill>
+          <Pill href={ERSTGESPRAECH_HREF} variant="outline">Kostenloses Erstgespräch</Pill>
+          <a href={`mailto:${site.email}?subject=${encodeURIComponent(`Schulung: ${training.title}`)}`} className="inline-flex min-h-11 items-center justify-center text-[15px] font-medium text-charcoal underline-offset-4 hover:underline">
+            Per E-Mail anfragen
+          </a>
+        </aside>
       </div>
     </article>
   )
