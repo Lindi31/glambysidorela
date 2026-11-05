@@ -207,17 +207,20 @@
 
     .hero-stage {
       --hero-pinned: 1;
+      --hero-bleed: 8rem; /* Dunkle Fläche reicht unter schwebende Browser-Leisten. */
+      --hero-w: min(92vw, 66svh);
+      --hero-rise: -38svh;
       background: #FAF7F2;
-      height: 240lvh;
+      height: calc(175lvh + var(--hero-bleed));
       padding: 0;
       view-timeline: --hero block;
     }
 
-    .hero-pin { display: block; height: 100lvh; overflow: hidden; position: sticky; top: 0; }
+    .hero-pin { display: block; height: calc(100lvh + var(--hero-bleed)); overflow: hidden; position: sticky; top: 0; }
 
     .hero-dark {
       animation: hero-dark linear both;
-      animation-range: contain 35% contain 90%;
+      animation-range: contain 35% contain calc(100% - var(--hero-bleed));
       animation-timeline: --hero;
       background: #2C2826;
       display: block;
@@ -228,15 +231,16 @@
 
     .hero-photo {
       animation: hero-photo linear both;
-      animation-range: contain 0% contain 100%;
+      animation-range: contain 0% contain calc(100% - var(--hero-bleed));
       animation-timeline: --hero;
-      bottom: calc(100lvh - 110svh);
+      /* Normal 10 % unter dem Bildschirm, bei wenig Höhe tiefer, damit der Bogen die Buttons nie berührt. */
+      bottom: calc(var(--hero-bleed) + min(100lvh - 110svh, 100lvh - 3.5rem - 4svh - 19rem - var(--hero-w) * 1.125));
       left: 50%;
       margin: 0;
       position: absolute;
       transform-origin: bottom;
       translate: -50% 0;
-      width: min(92vw, 66svh);
+      width: var(--hero-w);
       will-change: transform;
       z-index: 10;
     }
@@ -276,6 +280,7 @@
     }
 
     @media (min-width: 768px) {
+      .hero-stage { --hero-bleed: 0rem; --hero-rise: -30%; height: 240lvh; }
       .hero-photo { bottom: calc(100lvh - 133svh); }
     }
 
@@ -296,7 +301,7 @@
 @keyframes hero-dark { to { opacity: 0; } }
 @keyframes hero-photo {
   from { transform: translateY(0) scale(.86); }
-  to { transform: translateY(-30%) scale(1); }
+  to { transform: translateY(var(--hero-rise)) scale(1); }
 }
 @keyframes hero-copy { to { opacity: 0; transform: translateY(-48px); } }
 @keyframes hero-off { to { visibility: hidden; } }
