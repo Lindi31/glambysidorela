@@ -55,11 +55,12 @@ export function HeroStage({ kicker, headline, image }: Props & { image: string }
   const reduce = useReducedMotion();
   const scrollYProgress = useSectionProgress(ref, ["start start", "end end"]);
 
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const copyY = useTransform(scrollYProgress, [0, 0.3], [0, -48]);
-  const photoY = useTransform(scrollYProgress, [0, 0.72], ["0%", "-30%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 0.72], [0.86, 1]);
-  const darkness = useTransform(scrollYProgress, [0.38, 0.78], [1, 0]);
+  // Die Bewegung läuft bis zum Ende des Abschnitts, damit kein Wischen ins Leere geht.
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+  const copyY = useTransform(scrollYProgress, [0, 0.4], [0, -48]);
+  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
+  const photoScale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
+  const darkness = useTransform(scrollYProgress, [0.35, 0.95], [1, 0]);
 
   if (reduce) {
     return (
@@ -73,7 +74,7 @@ export function HeroStage({ kicker, headline, image }: Props & { image: string }
   }
 
   return (
-    <section id="hero-stage" ref={ref} className="relative h-[240svh] bg-cream">
+    <section id="hero-stage" ref={ref} className="relative h-[165svh] bg-cream md:h-[240svh]">
       <div className="sticky top-0 h-svh overflow-hidden">
         <motion.div aria-hidden style={{ opacity: darkness }} className="absolute inset-0 bg-charcoal" />
         <motion.div
