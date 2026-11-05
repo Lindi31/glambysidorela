@@ -211,6 +211,24 @@ body:has([data-maintenance]) .site-bar { display: none; }
 .rich-text ol { list-style: decimal; padding-left: 1.2em; }
 .rich-text a { text-decoration: underline; text-underline-offset: 4px; }
 
+/* Die feine Linie zeichnet sich beim Öffnen einmal selbst */
+.line-draw > :is(path, ellipse, circle[pathLength]) { stroke-dasharray: 1; }
+.line-draw > circle:not([pathLength]) { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .line-draw > :is(path, ellipse, circle[pathLength]) { animation: ring-draw 1.8s cubic-bezier(.32, .72, 0, 1) both; }
+  .line-draw > :nth-child(3n + 1) { animation-delay: .08s; }
+  .line-draw > :nth-child(3n + 2) { animation-delay: .22s; }
+  .line-draw > circle:not([pathLength]) { animation: dot-in 1.4s ease-out both; }
+}
+@keyframes dot-in { from { opacity: 0; } }
+
+/* Fragen klappen weich auf. Browser ohne ::details-content öffnen sie einfach direkt. */
+@media (prefers-reduced-motion: no-preference) {
+  .faq { interpolate-size: allow-keywords; }
+  .faq details::details-content { block-size: 0; opacity: 0; overflow: clip; transition: block-size .32s ease, opacity .32s ease, content-visibility .32s allow-discrete; }
+  .faq details[open]::details-content { block-size: auto; opacity: 1; }
+}
+
 /* Impressum und Datenschutz aus dem CMS, gleiche Optik wie die Startwerte */
 .legal-text h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.1; color: var(--charcoal); margin-bottom: .5rem; }
 .legal-text h2 + p { margin-top: 0; }

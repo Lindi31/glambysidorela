@@ -8,7 +8,7 @@ import { BRIDE_OPTIONS, GIFT_AMOUNTS, SHOP_EXAMPLES, TREATMENTS } from "./offers
 import { CATEGORY_LABELS, CREDENTIALS, LOCATIONS, SITE, mapsUrl, type SiteLocation } from "./site"
 import { DEFAULT_TEXTS, mergeTexts } from "./texts"
 
-const SERVICE_FIELDS = `_id, title, "slug": slug.current, category, shortDescription, description, priceFrom, duration, order, bookingOrder, quizWhy,
+const SERVICE_FIELDS = `_id, title, "slug": slug.current, category, shortDescription, description, priceFrom, duration, lasts, idealFor, "faq": faq[]{ question, answer }, order, bookingOrder, quizWhy,
   "image": image{ ..., asset }, "gallery": gallery[]{ ..., asset }, calcomEventType, seoTitle, seoDescription`
 
 const SERVICES_QUERY = defineQuery(`*[_type == "service" && defined(slug.current) && !(_id in $hidden)] | order(order asc) { ${SERVICE_FIELDS} }`)

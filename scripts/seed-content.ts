@@ -9,7 +9,7 @@ import { createReadStream } from "node:fs"
 import { join } from "node:path"
 import { getCliClient } from "sanity/cli"
 import { BOOKABLES } from "../lib/booking"
-import { QUIZ_WHY, SERVICES, TRAININGS, textBlocks } from "../lib/catalog"
+import { QUIZ_WHY, SERVICES, SERVICE_DETAILS, TRAININGS, textBlocks } from "../lib/catalog"
 import { BRIDE_OPTIONS, GIFT_AMOUNTS, SHOP_EXAMPLES, TREATMENTS } from "../lib/offers"
 import { CATEGORY_LABELS, CREDENTIALS, LOCATIONS, SITE } from "../lib/site"
 import { DEFAULT_TEXTS } from "../lib/texts"
@@ -37,6 +37,9 @@ const services = SERVICES.map((service, index) => ({
   bookingOrder: BOOKABLES.findIndex((item) => item.id === service.slug) + 1,
   ...(BOOKABLES.find((item) => item.id === service.slug)?.event ? { calcomEventType: BOOKABLES.find((item) => item.id === service.slug)?.event } : {}),
   ...(QUIZ_WHY[service.slug] ? { quizWhy: QUIZ_WHY[service.slug] } : {}),
+  ...(SERVICE_DETAILS[service.slug]?.lasts ? { lasts: SERVICE_DETAILS[service.slug].lasts } : {}),
+  idealFor: SERVICE_DETAILS[service.slug]?.idealFor ?? [],
+  faq: (SERVICE_DETAILS[service.slug]?.faq ?? []).map((item) => ({ _key: key(), ...item })),
   seoTitle: `${service.title} in Bruchsal und Jülich`,
   seoDescription: `${service.short} Bei Sidorela Isa in Bruchsal und Jülich. Jetzt Termin buchen.`,
 }))

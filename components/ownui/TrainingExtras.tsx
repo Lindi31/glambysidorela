@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { fieldClass, labelClass, useRequest } from "@/components/ownui/useRequest";
 import { Pill, pillClass } from "@/components/ownui/Pill";
 import { ERSTGESPRAECH_HREF } from "@/lib/offers";
@@ -86,9 +87,12 @@ export function RefillReminder({ treatment, title, consent, doneText }: { treatm
   }
 
   return (
-    <section className="rounded-[28px] bg-white p-7 md:p-10">
-      <h2 className="font-display text-[clamp(30px,3.4vw,40px)] leading-[1.04] tracking-[-0.018em] text-charcoal">{title}</h2>
-      <form onSubmit={submit} className="mt-5 flex flex-col gap-4">
+    <details className="group rounded-[24px] bg-white px-5 md:rounded-[28px] md:px-7">
+      <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 py-4 font-display text-[24px] leading-[1.1] tracking-[-0.012em] text-charcoal md:text-[28px] [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDown size={20} strokeWidth={1.5} aria-hidden className="flex-none transition-transform duration-300 group-open:rotate-180" />
+      </summary>
+      <form onSubmit={submit} className="flex flex-col gap-4 pb-6">
         <div className="grid gap-4 md:grid-cols-2">
           <label className={labelClass}>Dein Name<input className={fieldClass} name="name" required minLength={2} autoComplete="name" /></label>
           <label className={labelClass}>Deine E-Mail<input className={fieldClass} name="email" type="email" required autoComplete="email" /></label>
@@ -101,6 +105,6 @@ export function RefillReminder({ treatment, title, consent, doneText }: { treatm
         <button type="submit" disabled={status === "sending"} className={pillClass("dark", "self-start disabled:opacity-60")}>Erinnerung aktivieren</button>
         {status === "error" && <p role="alert" className="text-[14px] text-rose-deep">Das hat nicht geklappt. Bitte versuche es später noch einmal.</p>}
       </form>
-    </section>
+    </details>
   );
 }
