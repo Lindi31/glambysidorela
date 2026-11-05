@@ -7,7 +7,7 @@ import { z } from "zod"
 import { PageIntro, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
 import { pillClass } from "@/components/ownui/Pill"
 import { fieldClass, labelClass } from "@/components/ownui/useRequest"
-import { SITE } from "@/lib/site"
+import type { PageTexts } from "@/lib/texts"
 
 const schema = z.object({
   name: z.string().min(2, "Bitte gib deinen Namen ein."),
@@ -17,7 +17,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-function ContactForm() {
+function ContactForm({ t }: { t: PageTexts["kontakt"] }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
@@ -40,8 +40,8 @@ function ContactForm() {
   if (status === "success") {
     return (
       <div aria-live="polite">
-        <h2 className={sectionTitle}>Danke, deine Nachricht ist da.</h2>
-        <p className="mt-3 text-[17px] text-charcoal/75">Ich melde mich so schnell wie möglich bei dir.</p>
+        <h2 className={sectionTitle}>{t.doneTitle}</h2>
+        <p className="mt-3 text-[17px] text-charcoal/75">{t.doneText}</p>
         <button type="button" onClick={() => setStatus("idle")} className="mt-3 min-h-11 text-[15px] font-medium text-charcoal underline underline-offset-4">
           Weitere Nachricht senden
         </button>
@@ -53,7 +53,7 @@ function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-      <h2 className={sectionTitle}>Schreib mir direkt.</h2>
+      <h2 className={sectionTitle}>{t.formTitle}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className={labelClass}>
           Name
@@ -79,16 +79,16 @@ function ContactForm() {
   )
 }
 
-export function KontaktView({ settings }: { settings?: { whatsapp?: string | null; instagram?: string | null } | null }) {
+export function KontaktView({ whatsapp, email, instagram, instagramHandle, t }: { whatsapp: string; email: string; instagram: string; instagramHandle: string; t: PageTexts["kontakt"] }) {
   const channels = [
-    { href: `https://wa.me/${settings?.whatsapp ?? SITE.whatsapp}`, title: "WhatsApp", text: "Am schnellsten" },
-    { href: `mailto:${SITE.email}`, title: "E-Mail", text: SITE.email },
-    { href: settings?.instagram ?? SITE.instagram, title: "Instagram", text: SITE.instagramHandle },
+    { href: `https://wa.me/${whatsapp}`, title: "WhatsApp", text: t.whatsappNote },
+    { href: `mailto:${email}`, title: "E-Mail", text: email },
+    { href: instagram, title: "Instagram", text: instagramHandle },
   ]
 
   return (
     <div className="bg-cream pb-24 md:pb-36">
-      <PageIntro title="Kontakt und Standorte in Bruchsal und Jülich." lead="Du hast Fragen, möchtest einen Termin oder interessierst dich für eine Schulung? Meld dich einfach." />
+      <PageIntro title={t.title} lead={t.lead} />
       <div className={`${pageShell} flex flex-col gap-4`}>
         <ul className="grid gap-4 md:grid-cols-3">
           {channels.map((channel) => (
@@ -105,7 +105,7 @@ export function KontaktView({ settings }: { settings?: { whatsapp?: string | nul
           ))}
         </ul>
         <div className={`${cardClass} p-6 md:p-10`}>
-          <ContactForm />
+          <ContactForm t={t} />
         </div>
       </div>
     </div>

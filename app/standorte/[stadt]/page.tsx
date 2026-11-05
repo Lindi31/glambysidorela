@@ -9,12 +9,12 @@ import { Footer } from "@/components/ownui/Footer"
 import { Header } from "@/components/ownui/Header"
 import { JsonLd } from "@/components/ownui/JsonLd"
 import { breadcrumbs } from "@/lib/schema"
-import { CATEGORY_LABELS, LOCATIONS, SITE } from "@/lib/site"
-import { getServices } from "@/lib/content"
+import { LOCATIONS } from "@/lib/site"
+import { getCategories, getServices, getSite } from "@/lib/content"
 
 type Props = { params: Promise<{ stadt: string }> }
 
-const findLocation = (slug: string) => LOCATIONS.find((location) => location.slug === slug)
+const findLocation = async (slug: string) => (await getSite()).locations.find((location) => location.slug === slug)
 
 export function generateStaticParams() {
   return LOCATIONS.map((location) => ({ stadt: location.slug }))
@@ -22,7 +22,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { stadt } = await params
-  const location = findLocation(stadt)
+  const location = await findLocation(stadt)
   if (!location) return {}
   return {
     title: `Lashes, Brows & Permanent Make-up in ${location.city}`,
@@ -33,10 +33,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocationPage({ params }: Props) {
   const { stadt } = await params
-  const location = findLocation(stadt)
+  const location = await findLocation(stadt)
   if (!location) notFound()
 
-  const services = await getServices()
+  const [services, site, categories] = await Promise.all([getServices(), getSite(), getCategories()])
   const nearby = location.nearby.join(", ")
 
   return (
@@ -51,7 +51,7 @@ export default async function LocationPage({ params }: Props) {
                 Lashes, Brows und Permanent Make-up in {location.city}
               </h1>
               <p className="mt-5 max-w-[34em] text-[17px] leading-snug text-charcoal/75 md:text-[19px]">
-                Bei {SITE.name} in {location.city} ({location.region}) nimmt sich Sidorela Isa persönlich Zeit für
+                Bei {site.name} in {location.city} ({location.region}) nimmt sich Sidorela Isa persönlich Zeit für
                 dich. Das Studio ist auch gut erreichbar aus {nearby}.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
@@ -78,7 +78,7 @@ export default async function LocationPage({ params }: Props) {
               </div>
               <div className="flex gap-3 items-center">
                 <Phone size={20} className="text-rose-deep shrink-0" aria-hidden />
-                <a href={`tel:${SITE.phone}`} className="inline-flex items-center min-h-11 underline underline-offset-4">{SITE.phoneDisplay}</a>
+                <a href={`tel:${site.phone}`} className="inline-flex items-center min-h-11 underline underline-offset-4">{site.phoneDisplay}</a>
               </div>
             </address>
           </div>
@@ -95,7 +95,7 @@ export default async function LocationPage({ params }: Props) {
                       href={`/leistungen/${service.slug}`}
                       className="flex h-full flex-col rounded-[24px] bg-white p-6 transition-transform duration-700 ease-out hover:scale-[1.01]"
                     >
-                      <span className="text-xs text-charcoal/70">{service.category ? CATEGORY_LABELS[service.category] : null}</span>
+                      <span className="text-xs text-charcoal/70">{categories.find((category) => category.id === service.category)?.label}</span>
                       <span className="mt-1 font-display text-[28px] leading-[1.05] text-charcoal">{service.title}</span>
                       {service.shortDescription && <span className="mt-2 text-sm text-charcoal/70 leading-relaxed flex-1">{service.shortDescription}</span>}
                       {service.priceFrom && <span className="mt-4 text-sm font-medium text-charcoal">ab {service.priceFrom} €</span>}

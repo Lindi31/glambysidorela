@@ -1,10 +1,10 @@
-import { client } from "@/sanity/lib/client"
+import { sanityFetch } from "@/sanity/lib/live"
 import { defineQuery } from "next-sanity"
 import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
-import { PortableText } from "@portabletext/react"
+import { PortableText, type PortableTextBlock } from "@portabletext/react"
 import type { Metadata } from "next"
-import { LOCATIONS, SITE } from "@/lib/site"
+import { getSite } from "@/lib/content"
 
 export const metadata: Metadata = {
   title: "Impressum",
@@ -17,8 +17,10 @@ const IMPRESSUM_QUERY = defineQuery(`
 `)
 
 export default async function ImpressumPage() {
-  const page = await client.fetch(IMPRESSUM_QUERY).catch(() => null)
-  const main = LOCATIONS[0]
+  const { data } = await sanityFetch({ query: IMPRESSUM_QUERY })
+  const page = data as { title?: string; content?: PortableTextBlock[] } | null
+  const site = await getSite()
+  const main = site.locations[0]
 
   return (
     <>
@@ -30,7 +32,7 @@ export default async function ImpressumPage() {
           </h1>
 
           {page?.content ? (
-            <div className="rich-text">
+            <div className="legal-text space-y-8 text-[17px] leading-relaxed text-charcoal/80">
               <PortableText value={page.content} />
             </div>
           ) : (
@@ -38,9 +40,9 @@ export default async function ImpressumPage() {
               <section>
                 <h2 className="mb-2 font-display text-[28px] leading-[1.1] text-charcoal">Angaben gemäß § 5 DDG</h2>
                 <address className="not-italic">
-                  {SITE.owner}
+                  {site.owner}
                   <br />
-                  {SITE.name}
+                  {site.name}
                   <br />
                   {main.street}
                   <br />
@@ -50,9 +52,9 @@ export default async function ImpressumPage() {
               <section>
                 <h2 className="mb-2 font-display text-[28px] leading-[1.1] text-charcoal">Kontakt</h2>
                 <p>
-                  Telefon: <a className="underline underline-offset-4" href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a>
+                  Telefon: <a className="underline underline-offset-4" href={`tel:${site.phone}`}>{site.phoneDisplay}</a>
                   <br />
-                  E-Mail: <a className="underline underline-offset-4" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                  E-Mail: <a className="underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a>
                 </p>
               </section>
             </div>

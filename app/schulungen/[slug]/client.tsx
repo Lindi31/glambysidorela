@@ -3,7 +3,8 @@ import { DetailHero, cardClass, pageShell, sectionTitle } from "@/components/own
 import { Pill } from "@/components/ownui/Pill"
 import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
 import { ERSTGESPRAECH_HREF } from "@/lib/offers"
-import { SITE, whatsappUrl } from "@/lib/site"
+import { getSite, getTexts } from "@/lib/content"
+import { whatsappUrl } from "@/lib/site"
 
 type Training = {
   title: string
@@ -18,7 +19,8 @@ type Training = {
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
 
-export function TrainingDetail({ training }: { training: Training }) {
+export async function TrainingDetail({ training }: { training: Training }) {
+  const [{ schulungen: t }, site] = await Promise.all([getTexts(), getSite()])
   const meta = [
     ...(training.price ? [`${training.price} €`] : []),
     ...(training.durationDays ? [`${training.durationDays} ${training.durationDays === 1 ? "Tag" : "Tage"}`] : []),
@@ -26,7 +28,7 @@ export function TrainingDetail({ training }: { training: Training }) {
 
   return (
     <article className="bg-cream">
-      <DetailHero crumbs={[{ href: "/schulungen", label: "Schulungen" }]} current={training.title} kicker={training.level} title={training.title} meta={meta} />
+      <DetailHero crumbs={[{ href: "/schulungen", label: "Academy" }]} current={training.title} kicker={training.level} title={training.title} meta={meta} />
 
       <div className={`${pageShell} grid items-start gap-10 py-14 md:py-20 lg:grid-cols-[1fr_360px] lg:gap-16`}>
         <div className="flex min-w-0 flex-col gap-12">
@@ -38,7 +40,7 @@ export function TrainingDetail({ training }: { training: Training }) {
 
           {training.includes && training.includes.length > 0 && (
             <section>
-              <h2 className={sectionTitle}>Das ist dabei</h2>
+              <h2 className={sectionTitle}>{t.includesTitle}</h2>
               <ul className="mt-6 grid gap-2 sm:grid-cols-2">
                 {training.includes.map((item) => (
                   <li key={item} className="rounded-2xl bg-white px-5 py-4 text-[16px] text-charcoal">{item}</li>
@@ -49,7 +51,7 @@ export function TrainingDetail({ training }: { training: Training }) {
 
           {training.upcomingDates && training.upcomingDates.length > 0 && (
             <section>
-              <h2 className={sectionTitle}>Nächste Termine</h2>
+              <h2 className={sectionTitle}>{t.datesTitle}</h2>
               <ul className="mt-6 flex flex-col gap-2">
                 {training.upcomingDates.map((entry, index) => (
                   <li key={index} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 rounded-2xl bg-white px-5 py-4 text-[15px] text-charcoal">
@@ -64,16 +66,16 @@ export function TrainingDetail({ training }: { training: Training }) {
             </section>
           )}
 
-          {training.price && <TrainingCalculator fee={training.price} />}
-          <TrainingWaitlist training={training.title} />
+          {training.price && <TrainingCalculator fee={training.price} title={t.calculatorTitle} note={t.calculatorNote} />}
+          <TrainingWaitlist training={training.title} title={t.waitlistTitle} lead={t.waitlistLead} doneTitle={t.waitlistDoneTitle} doneText={t.waitlistDoneText} />
         </div>
 
         <aside className={`${cardClass} order-first flex flex-col gap-3 p-6 md:p-7 lg:sticky lg:top-20 lg:order-none`}>
-          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">Platz anfragen</h2>
+          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">{t.requestTitle}</h2>
           {meta.length > 0 && <p className="mb-2 text-[15px] text-charcoal/75">{meta.join(", ")}</p>}
-          <Pill href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für die ${training.title}.`)}>Per WhatsApp anfragen</Pill>
+          <Pill href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für die ${training.title}.`, site.whatsapp)}>Per WhatsApp anfragen</Pill>
           <Pill href={ERSTGESPRAECH_HREF} variant="outline">Kostenloses Erstgespräch</Pill>
-          <a href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Schulung: ${training.title}`)}`} className="inline-flex min-h-11 items-center justify-center text-[15px] font-medium text-charcoal underline-offset-4 hover:underline">
+          <a href={`mailto:${site.email}?subject=${encodeURIComponent(`Schulung: ${training.title}`)}`} className="inline-flex min-h-11 items-center justify-center text-[15px] font-medium text-charcoal underline-offset-4 hover:underline">
             Per E-Mail anfragen
           </a>
         </aside>

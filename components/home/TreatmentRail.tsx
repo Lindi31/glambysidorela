@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { TREATMENTS, type TreatmentId } from "@/lib/offers";
 import { cn } from "@/lib/utils";
 import { TreatmentLine } from "./TreatmentLine";
 
-const TONES: Record<TreatmentId, { card: string; ink: string; soft: string; line: string }> = {
+const TONES: Record<string, { card: string; ink: string; soft: string; line: string }> = {
   lashes: { card: "bg-charcoal", ink: "text-cream", soft: "text-cream/75", line: "#C9A96E" },
   brows: { card: "bg-nude/70", ink: "text-charcoal", soft: "text-charcoal/75", line: "#7A5F18" },
   pmu: { card: "bg-white", ink: "text-charcoal", soft: "text-charcoal/75", line: "#8F4F57" },
@@ -15,7 +14,9 @@ const TONES: Record<TreatmentId, { card: string; ink: string; soft: string; line
   facial: { card: "bg-[#EFE8DF]", ink: "text-charcoal", soft: "text-charcoal/75", line: "#7A5F18" },
 };
 
-export function TreatmentRail() {
+type Treatment = { id: string; title: string; line: string; from: number };
+
+export function TreatmentRail({ title, treatments }: { title: string; treatments: Treatment[] }) {
   const rail = useRef<HTMLUListElement>(null);
   const move = (dir: number) => {
     const el = rail.current;
@@ -28,7 +29,7 @@ export function TreatmentRail() {
     <section className="overflow-hidden bg-cream pb-24 md:pb-36">
       <div className="mx-auto flex max-w-[1200px] items-end justify-between gap-6 px-5 lg:px-8">
         <h2 className="font-display text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-0.02em] text-charcoal">
-          Finde deinen Glow.
+          {title}
         </h2>
         <div className="hidden gap-2 md:flex">
           <button type="button" onClick={() => move(-1)} aria-label="Zurück" className="flex size-11 items-center justify-center rounded-full bg-charcoal/[0.07] text-charcoal transition-colors hover:bg-charcoal/[0.14]">
@@ -44,8 +45,8 @@ export function TreatmentRail() {
         ref={rail}
         className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 [scrollbar-width:none] lg:px-[max(2rem,calc((100vw-1200px)/2+2rem))] [&::-webkit-scrollbar]:hidden"
       >
-        {TREATMENTS.map((treatment) => {
-          const tone = TONES[treatment.id];
+        {treatments.map((treatment) => {
+          const tone = TONES[treatment.id] ?? TONES.pmu;
           return (
             <li key={treatment.id} className="w-[78vw] max-w-[360px] flex-none snap-start scroll-ml-5 lg:scroll-ml-[max(2rem,calc((100vw-1200px)/2+2rem))]">
               <Link

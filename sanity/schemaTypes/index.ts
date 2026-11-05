@@ -5,5 +5,8 @@ import galleryItem from './galleryItem'
 import about from './about'
 import siteSettings from './siteSettings'
 import legalPage from './legalPage'
+import pageTexts from './pageTexts'
+import treatmentCategory from './treatmentCategory'
+import product from './product'
 
-export const schemaTypes = [service, training, testimonial, galleryItem, about, siteSettings, legalPage]
+export const schemaTypes = [pageTexts, siteSettings, treatmentCategory, service, training, product, testimonial, galleryItem, about, legalPage]

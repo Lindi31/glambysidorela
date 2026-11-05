@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { LOCATIONS } from "@/lib/site";
+import { getSite, getTexts } from "@/lib/content";
 
-export function Locations() {
+export async function Locations() {
+  const [{ home }, site] = await Promise.all([getTexts(), getSite()]);
   return (
     <section className="bg-cream px-5 pb-24 md:pb-36 lg:px-8">
       <div className="mx-auto max-w-[1136px]">
-        <h2 className="font-display text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-0.02em] text-charcoal">Zwei Orte, dieselbe Handschrift.</h2>
+        <h2 className="font-display text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-0.02em] text-charcoal">{home.locationsTitle}</h2>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {LOCATIONS.map((location) => (
+          {site.locations.map((location) => (
             <address key={location.slug} className="rise flex min-h-[280px] flex-col justify-between rounded-[28px] bg-white p-7 not-italic text-charcoal md:p-9">
               <div>
                 <h3 className="font-display text-[clamp(38px,4vw,54px)] leading-none tracking-[-0.018em]">{location.city}</h3>

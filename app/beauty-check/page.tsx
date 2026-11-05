@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/ownui/Footer";
 import { Header } from "@/components/ownui/Header";
 import { BeautyCheck } from "./client";
+import { getQuizServices, getTexts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Beauty-Check: Welche Behandlung passt zu dir?",
@@ -9,12 +10,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/beauty-check" },
 };
 
-export default function BeautyCheckPage() {
+export default async function BeautyCheckPage() {
+  const [texts, services] = await Promise.all([getTexts(), getQuizServices()]);
   return (
     <>
       <Header />
       <main>
-        <BeautyCheck />
+        <BeautyCheck t={texts.beautyCheck} services={services} />
       </main>
       <Footer />
     </>

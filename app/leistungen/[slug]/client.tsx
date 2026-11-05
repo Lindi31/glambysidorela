@@ -5,7 +5,8 @@ import { DetailHero, cardClass, pageShell, sectionTitle } from "@/components/own
 import { Pill } from "@/components/ownui/Pill"
 import { RefillReminder } from "@/components/ownui/TrainingExtras"
 import { BERATUNG_HREF } from "@/lib/offers"
-import { CATEGORY_LABELS, whatsappUrl } from "@/lib/site"
+import { getCategories, getSite, getTexts } from "@/lib/content"
+import { whatsappUrl } from "@/lib/site"
 import { urlFor } from "@/sanity/lib/image"
 
 type SanityImage = Parameters<typeof urlFor>[0] & { asset?: { _ref?: string } }
@@ -23,17 +24,14 @@ type Service = {
   calcomEventType?: string | null
 }
 
-const STEPS = [
-  { title: "Online buchen", text: "Wunschtermin wählen. Die Bestätigung kommt sofort per E-Mail." },
-  { title: "Kurze Beratung", text: "Wir stimmen ab, welcher Look zu dir und deinem Alltag passt." },
-  { title: "Behandlung und Pflege", text: "Du lehnst dich zurück. Danach bekommst du Tipps, damit dein Ergebnis lange schön bleibt." },
-]
-
 type Related = { _id: string; title: string; slug: string; priceFrom?: number | null }
 
-export function ServiceDetail({ service, related }: { service: Service; related: Related[] }) {
-  const bookingHref = service.calcomEventType ? `/termin?event=${service.calcomEventType}` : `/termin?behandlung=${service.slug}`
-  const whatsapp = whatsappUrl(`Hallo Sidorela, ich habe eine Frage zu ${service.title}.`)
+export async function ServiceDetail({ service, related }: { service: Service; related: Related[] }) {
+  const [texts, site, categories] = await Promise.all([getTexts(), getSite(), getCategories()])
+  const t = texts.leistung
+  const STEPS = [t.step1, t.step2, t.step3]
+  const bookingHref = `/termin?behandlung=${service.slug}`
+  const whatsapp = whatsappUrl(`Hallo Sidorela, ich habe eine Frage zu ${service.title}.`, site.whatsapp)
   const photos = [service.image, ...(service.gallery ?? [])].filter((photo): photo is SanityImage => Boolean(photo?.asset?._ref))
   const meta = [
     ...(service.priceFrom ? [`ab ${service.priceFrom} €`] : []),
@@ -45,7 +43,7 @@ export function ServiceDetail({ service, related }: { service: Service; related:
       <DetailHero
         crumbs={[{ href: "/leistungen", label: "Leistungen" }]}
         current={service.title}
-        kicker={service.category ? CATEGORY_LABELS[service.category] : null}
+        kicker={categories.find((category) => category.id === service.category)?.label ?? null}
         title={service.title}
         lead={service.shortDescription}
         meta={meta}
@@ -61,7 +59,7 @@ export function ServiceDetail({ service, related }: { service: Service; related:
 
           {photos.length > 0 && (
             <section>
-              <h2 className={sectionTitle}>Einblicke</h2>
+              <h2 className={sectionTitle}>{t.photosTitle}</h2>
               <ul className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
                 {photos.map((photo, index) => (
                   <li key={index} className="relative aspect-[4/5] overflow-hidden rounded-[20px] bg-nude/30">
@@ -73,7 +71,7 @@ export function ServiceDetail({ service, related }: { service: Service; related:
           )}
 
           <section>
-            <h2 className={sectionTitle}>So läuft dein Termin ab</h2>
+            <h2 className={sectionTitle}>{t.stepsTitle}</h2>
             <ol className="mt-6 flex flex-col gap-2">
               {STEPS.map((step, index) => (
                 <li key={step.title} className="flex gap-5 rounded-2xl bg-white p-5 md:p-6">
@@ -87,11 +85,11 @@ export function ServiceDetail({ service, related }: { service: Service; related:
             </ol>
           </section>
 
-          {service.category && ["lashes", "brows"].includes(service.category) && <RefillReminder treatment={service.title} />}
+          {service.category && ["lashes", "brows"].includes(service.category) && <RefillReminder treatment={service.title} title={t.reminderTitle} consent={t.reminderConsent} doneText={t.reminderDone} />}
 
           {related.length > 0 && (
             <section>
-              <h2 className={sectionTitle}>Passt auch dazu</h2>
+              <h2 className={sectionTitle}>{t.relatedTitle}</h2>
               <ul className="mt-6 grid gap-2 sm:grid-cols-3">
                 {related.map((item) => (
                   <li key={item._id}>
@@ -107,7 +105,7 @@ export function ServiceDetail({ service, related }: { service: Service; related:
         </div>
 
         <aside className={`${cardClass} hidden flex-col gap-3 p-7 lg:sticky lg:top-20 lg:flex`}>
-          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">Dein Termin</h2>
+          <h2 className="font-display text-[34px] leading-none tracking-[-0.015em] text-charcoal">{t.bookingTitle}</h2>
           {meta.length > 0 && <p className="mb-2 text-[15px] text-charcoal/75">{meta.join(", ")}</p>}
           <Pill href={bookingHref}>Termin buchen</Pill>
           <Pill href={BERATUNG_HREF} variant="outline">Kostenlose Beratung</Pill>

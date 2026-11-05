@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-import { BOOKABLE_EVENTS, CAL_API, CAL_USERNAME } from "@/lib/booking"
+import { rejectRequest } from "@/lib/guard"
+import { CAL_API, CAL_USERNAME } from "@/lib/booking"
+import { getAllowedEvents } from "@/lib/bookingEvents"
 
 const schema = z.object({
-  event: z.string().refine((value) => BOOKABLE_EVENTS.includes(value)),
+  event: z.string().min(1).max(80),
   start: z.string().datetime({ offset: true }),
-  name: z.string().trim().min(2).max(80),
+  name: z.string().trim().min(2).max(80).regex(/^[^\r\n]*$/),
   email: z.string().trim().email().max(120),
   phone: z.string().trim().max(30).optional(),
   notes: z.string().trim().max(500).optional(),
@@ -14,11 +16,17 @@ const schema = z.object({
 })
 
 export async function POST(req: Request) {
+  const blocked = rejectRequest(req, "buchen")
+  if (blocked) return blocked
+
   const parsed = schema.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ error: "Bitte prüfe deine Eingaben." }, { status: 400 })
   }
   const data = parsed.data
+  if (!(await getAllowedEvents()).includes(data.event)) {
+    return NextResponse.json({ error: "Bitte prüfe deine Eingaben." }, { status: 400 })
+  }
 
   const notes = [`Standort: ${data.location}`, data.phone && `Telefon: ${data.phone}`, data.notes].filter(Boolean).join("\n")
 

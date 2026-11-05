@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/leistungen", label: "Leistungen" },
   { href: "/galerie", label: "Galerie" },
   { href: "/brautpaket", label: "Brautpaket" },
-  { href: "/schulungen", label: "Schulungen" },
+  { href: "/schulungen", label: "Academy" },
   { href: "/gutschein", label: "Gutscheine" },
   { href: "/shop", label: "Pflege" },
   { href: "/ueber-mich", label: "Über mich" },

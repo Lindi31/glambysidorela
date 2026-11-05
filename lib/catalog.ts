@@ -1,6 +1,7 @@
 // Startinhalte der Website. Sie erscheinen, solange in Sanity nichts Echtes steht,
 // und werden von scripts/seed-content.ts auch nach Sanity geschrieben.
 // Preise und Dauer bitte prüfen.
+import { BOOKABLES } from "./booking"
 
 export type CatalogTraining = {
   slug: string
@@ -177,6 +178,19 @@ export const TRAININGS: CatalogTraining[] = [
 ]
 
 
+export const QUIZ_WHY: Record<string, string> = {
+  "lash-lifting": "Deine eigenen Wimpern, schön geschwungen. Dein Blick wirkt wach, ganz ohne künstliche Wimpern.",
+  wimpernverlaengerung: "Einzeln gesetzte Wimpern, abgestimmt auf deine Augenform. Morgens brauchst du keine Tusche mehr.",
+  "volumen-lashes": "Feine Fächer geben dir mehr Dichte und einen glamourösen Augenaufschlag.",
+  "brow-lamination": "Deine Härchen werden in Form gebracht. So wirken die Brauen voller und das Styling geht schneller.",
+  microblading: "Feine Härchenzeichnung für natürlich volle Brauen, die morgens schon sitzen.",
+  "powder-brows": "Weich schattierte Brauen mit einem Finish wie frisch gepudert.",
+  "lip-blush": "Ein zarter Farbschleier betont deine natürliche Lippenform.",
+  gesichtsbehandlung: "Reinigung und Pflege, abgestimmt auf deine Haut, für einen frischen Glow.",
+  "event-make-up": "Ein Look, der genau dann sitzt, wenn es darauf ankommt.",
+  "braut-make-up": "Dein Hochzeits-Look, abgestimmt auf dich, dein Kleid und deine Feier.",
+}
+
 // Alte Testeinträge aus Sanity: werden nirgends mehr angezeigt.
 export const LEGACY_TEST_IDS = [
   "2fc43fac-0aed-4b98-9e17-8e3657e558e8",
@@ -211,11 +225,13 @@ export const fallbackServices = () =>
     duration: service.duration,
     priceFrom: service.priceFrom,
     order: index + 1,
+    bookingOrder: BOOKABLES.findIndex((item) => item.id === service.slug) + 1,
+    quizWhy: QUIZ_WHY[service.slug] ?? null,
     seoTitle: `${service.title} in Bruchsal und Jülich`,
     seoDescription: `${service.short} Bei Sidorela Isa in Bruchsal und Jülich. Jetzt Termin buchen.`,
     image: null as SanityImageRef | null,
     gallery: null as SanityImageRef[] | null,
-    calcomEventType: null as string | null,
+    calcomEventType: (BOOKABLES.find((item) => item.id === service.slug)?.event ?? null) as string | null,
   }))
 
 export const fallbackTrainings = () =>

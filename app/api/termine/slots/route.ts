@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server"
-import { BOOKABLE_EVENTS, CAL_API, CAL_USERNAME } from "@/lib/booking"
+import { CAL_API, CAL_USERNAME } from "@/lib/booking"
+import { getAllowedEvents } from "@/lib/bookingEvents"
+import { rejectRequest } from "@/lib/guard"
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
 
 export async function GET(req: Request) {
+  const blocked = rejectRequest(req, "slots", 120, 60_000)
+  if (blocked) return blocked
+
   const { searchParams } = new URL(req.url)
   const event = searchParams.get("event") ?? ""
   const start = searchParams.get("start") ?? ""
   const end = searchParams.get("end") ?? ""
 
-  if (!BOOKABLE_EVENTS.includes(event) || !DATE.test(start) || !DATE.test(end)) {
+  if (!(await getAllowedEvents()).includes(event) || !DATE.test(start) || !DATE.test(end)) {
     return NextResponse.json({ error: "Ungültige Anfrage." }, { status: 400 })
   }
 

@@ -5,7 +5,7 @@ import { fieldClass, labelClass, useRequest } from "@/components/ownui/useReques
 import { Pill, pillClass } from "@/components/ownui/Pill";
 import { ERSTGESPRAECH_HREF } from "@/lib/offers";
 
-export function TrainingCalculator({ fee: initialFee = 499 }: { fee?: number }) {
+export function TrainingCalculator({ fee: initialFee = 499, title, note }: { fee?: number; title: string; note: string }) {
   const [fee, setFee] = useState(initialFee);
   const maxFee = Math.max(3000, initialFee);
   const [price, setPrice] = useState(89);
@@ -15,7 +15,7 @@ export function TrainingCalculator({ fee: initialFee = 499 }: { fee?: number }) 
 
   return (
     <section className="rounded-[28px] bg-charcoal p-7 text-cream md:p-12">
-      <h2 className="max-w-[14em] text-balance font-display text-[clamp(34px,4.6vw,60px)] leading-[1.02] tracking-[-0.02em]">Wann könnte sich deine Schulung lohnen?</h2>
+      <h2 className="max-w-[14em] text-balance font-display text-[clamp(34px,4.6vw,60px)] leading-[1.02] tracking-[-0.02em]">{title}</h2>
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         <label className="flex flex-col gap-2 text-[15px]">
           <span className="flex justify-between"><span>Kursgebühr</span><strong className="font-medium">{fee} €</strong></span>
@@ -33,13 +33,13 @@ export function TrainingCalculator({ fee: initialFee = 499 }: { fee?: number }) 
       <p aria-live="polite" className="mt-8 text-balance font-display text-[clamp(30px,3.8vw,48px)] leading-[1.06] tracking-[-0.015em] text-gold">
         Nach {clients} Kundinnen wäre die Kursgebühr wieder drin. Das wären etwa {weeks} {weeks === 1 ? "Woche" : "Wochen"}.
       </p>
-      <p className="mt-3 text-[13px] leading-snug text-cream/75">Rechenbeispiel mit {fee} € Kursgebühr, ohne Material, Miete und Steuern. Keine Verdienstgarantie.</p>
+      <p className="mt-3 text-[13px] leading-snug text-cream/75">Rechenbeispiel mit {fee} € Kursgebühr, {note}</p>
       <div className="mt-7"><Pill href={ERSTGESPRAECH_HREF} variant="light">Kostenloses Erstgespräch</Pill></div>
     </section>
   );
 }
 
-export function TrainingWaitlist({ training }: { training: string }) {
+export function TrainingWaitlist({ training, title, lead, doneTitle, doneText }: { training: string; title: string; lead: string; doneTitle: string; doneText: string }) {
   const { status, send } = useRequest();
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -51,16 +51,16 @@ export function TrainingWaitlist({ training }: { training: string }) {
   if (status === "done") {
     return (
       <section aria-live="polite" className="rounded-[28px] bg-white p-7 md:p-10">
-        <h2 className="font-display text-[36px] leading-[1.04] tracking-[-0.018em] text-charcoal">Du stehst auf der Liste.</h2>
-        <p className="mt-2 text-[17px] text-charcoal/75">Sidorela meldet sich, sobald neue Termine feststehen.</p>
+        <h2 className="font-display text-[36px] leading-[1.04] tracking-[-0.018em] text-charcoal">{doneTitle}</h2>
+        <p className="mt-2 text-[17px] text-charcoal/75">{doneText}</p>
       </section>
     );
   }
 
   return (
     <section className="rounded-[28px] bg-white p-7 md:p-10">
-      <h2 className="font-display text-[clamp(30px,3.6vw,44px)] leading-[1.04] tracking-[-0.018em] text-charcoal">Noch kein passender Termin dabei?</h2>
-      <p className="mt-2 text-[17px] text-charcoal/75">Trag dich auf die Warteliste ein. Du erfährst als Erste von neuen Terminen.</p>
+      <h2 className="font-display text-[clamp(30px,3.6vw,44px)] leading-[1.04] tracking-[-0.018em] text-charcoal">{title}</h2>
+      <p className="mt-2 text-[17px] text-charcoal/75">{lead}</p>
       <form onSubmit={submit} className="mt-6 grid items-end gap-4 md:grid-cols-[1fr_1fr_auto]">
         <label className={labelClass}>Dein Name<input className={fieldClass} name="name" required minLength={2} autoComplete="name" /></label>
         <label className={labelClass}>Deine E-Mail<input className={fieldClass} name="email" type="email" required autoComplete="email" /></label>
@@ -72,7 +72,7 @@ export function TrainingWaitlist({ training }: { training: string }) {
   );
 }
 
-export function RefillReminder({ treatment }: { treatment: string }) {
+export function RefillReminder({ treatment, title, consent, doneText }: { treatment: string; title: string; consent: string; doneText: string }) {
   const { status, send } = useRequest();
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,12 +82,12 @@ export function RefillReminder({ treatment }: { treatment: string }) {
   };
 
   if (status === "done") {
-    return <p aria-live="polite" className="rounded-[28px] bg-white p-7 text-[17px] text-charcoal">Alles klar. Du bekommst in etwa drei Wochen eine Erinnerung.</p>;
+    return <p aria-live="polite" className="rounded-[28px] bg-white p-7 text-[17px] text-charcoal">{doneText}</p>;
   }
 
   return (
     <section className="rounded-[28px] bg-white p-7 md:p-10">
-      <h2 className="font-display text-[clamp(30px,3.4vw,40px)] leading-[1.04] tracking-[-0.018em] text-charcoal">Soll ich dich ans Auffrischen erinnern?</h2>
+      <h2 className="font-display text-[clamp(30px,3.4vw,40px)] leading-[1.04] tracking-[-0.018em] text-charcoal">{title}</h2>
       <form onSubmit={submit} className="mt-5 flex flex-col gap-4">
         <div className="grid gap-4 md:grid-cols-2">
           <label className={labelClass}>Dein Name<input className={fieldClass} name="name" required minLength={2} autoComplete="name" /></label>
@@ -95,7 +95,7 @@ export function RefillReminder({ treatment }: { treatment: string }) {
         </div>
         <label className="flex items-start gap-3 text-[14px] leading-snug text-charcoal/75">
           <input type="checkbox" name="consent" required className="mt-0.5 size-5 flex-none accent-charcoal" />
-          Ich möchte einmalig eine Erinnerung per E-Mail erhalten. Die Einwilligung kann ich jederzeit widerrufen.
+          {consent}
         </label>
         <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
         <button type="submit" disabled={status === "sending"} className={pillClass("dark", "self-start disabled:opacity-60")}>Erinnerung aktivieren</button>

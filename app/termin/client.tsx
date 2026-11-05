@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { pageShell } from "@/components/ownui/PageIntro";
 import { pillClass } from "@/components/ownui/Pill";
 import { fieldClass, labelClass, useRequest } from "@/components/ownui/useRequest";
-import { BOOKABLES, type Bookable } from "@/lib/booking";
-import { LOCATIONS, SITE, whatsappUrl, type SiteLocation } from "@/lib/site";
+import type { Bookable } from "@/lib/booking";
+import { SITE, whatsappUrl, type SiteLocation } from "@/lib/site";
+import type { PageTexts } from "@/lib/texts";
 import { SlotPicker, formatDay, formatTime } from "./SlotPicker";
 
 const WISHES = ["Vormittags", "Nachmittags", "Am Wochenende"];
@@ -14,7 +15,7 @@ const title = "text-balance font-display text-[clamp(40px,6vw,72px)] leading-[1]
 const lead = "mt-4 max-w-[34em] text-[17px] leading-snug text-charcoal/75 md:text-[19px]";
 const choice = "flex min-h-[72px] w-full items-center justify-between gap-5 rounded-2xl bg-white px-6 py-3 text-left text-charcoal transition-colors duration-300 hover:bg-charcoal hover:text-cream";
 
-type Props = { event?: string; initialTreatment?: string; initialPlace?: string };
+type Props = { event?: string; initialTreatment?: string; initialPlace?: string; bookables: Bookable[]; locations: SiteLocation[]; t: PageTexts["termin"]; whatsapp: string };
 
 const priceLabel = (item: Bookable) => (item.from === 0 ? "kostenlos" : item.from ? `ab ${item.from} €` : "Preis auf Anfrage");
 
@@ -42,13 +43,13 @@ function calendarFile(item: Bookable, place: SiteLocation, start: string) {
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join("\r\n"))}`;
 }
 
-export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
+export function BookingFlow({ event, initialTreatment, initialPlace, bookables, locations, t, whatsapp }: Props) {
   const start = useMemo(
-    () => BOOKABLES.find((item) => item.id === initialTreatment || (event && item.event === event)) ?? null,
-    [event, initialTreatment],
+    () => bookables.find((item) => item.id === initialTreatment || (event && item.event === event)) ?? null,
+    [bookables, event, initialTreatment],
   );
   const [treatment, setTreatment] = useState<Bookable | null>(start);
-  const [place, setPlace] = useState<SiteLocation | null>(LOCATIONS.find((item) => item.slug === initialPlace) ?? null);
+  const [place, setPlace] = useState<SiteLocation | null>(locations.find((item) => item.slug === initialPlace) ?? null);
   const [slot, setSlot] = useState<string | null>(null);
   const [editing, setEditing] = useState<"treatment" | "place" | null>(null);
   const [booking, setBooking] = useState<"idle" | "sending" | "done" | "taken" | "error">("idle");
@@ -116,11 +117,11 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
         <svg aria-hidden viewBox="0 0 220 120" fill="none" className="w-[220px] overflow-visible">
           <path className="ring-light" pathLength={1} d="M6 116 A104 110 0 0 1 214 116" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
-        <h1 className={`${title} mt-4`}>{booking === "done" ? "Dein Termin steht." : "Deine Anfrage ist da."}</h1>
+        <h1 className={`${title} mt-4`}>{booking === "done" ? t.doneTitle : t.requestDoneTitle}</h1>
         {booking === "done" && slot ? (
           <>
             <p className="mt-5 text-[19px] leading-snug text-charcoal">{treatment.title}<br />{formatDay(slot)}, {formatTime(slot)} Uhr<br />{place.street}, {place.postalCode} {place.city}</p>
-            <p className="mt-4 text-[15px] text-charcoal/75">Die Bestätigung kommt gleich per E-Mail.</p>
+            <p className="mt-4 text-[15px] text-charcoal/75">{t.doneText}</p>
             <a href={calendarFile(treatment, place, slot)} download="termin-sidorela-isa.ics" className={pillClass("dark", "mt-7")}>In meinen Kalender</a>
           </>
         ) : (
@@ -149,9 +150,9 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
 
       {step === 1 && (
         <section key="treatment" className="step-in mx-auto mt-10 max-w-[820px] md:mt-14">
-          <h1 className={title}>Was darf ich für dich tun?</h1>
+          <h1 className={title}>{t.treatmentTitle}</h1>
           <div className="mt-8 flex flex-col gap-2">
-            {BOOKABLES.map((item) => (
+            {bookables.map((item) => (
               <button key={item.id} type="button" onClick={() => chooseTreatment(item)} className={choice}>
                 <span className="min-w-0 font-display text-[clamp(24px,3vw,28px)] leading-[1.05] tracking-[-0.012em]">{item.title}</span>
                 <span className="flex-none text-right text-[14px] font-medium leading-tight md:text-[15px]">{priceLabel(item)}</span>
@@ -163,9 +164,9 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
 
       {step === 2 && (
         <section key="place" className="step-in mx-auto mt-10 max-w-[820px] md:mt-14">
-          <h1 className={title}>Wo passt es dir besser?</h1>
+          <h1 className={title}>{t.placeTitle}</h1>
           <div className="mt-8 grid gap-2 md:grid-cols-2">
-            {LOCATIONS.map((location) => (
+            {locations.map((location) => (
               <button key={location.slug} type="button" onClick={() => choosePlace(location)} className="flex min-h-48 flex-col justify-between gap-6 rounded-[24px] bg-white p-7 text-left text-charcoal transition-colors duration-300 hover:bg-charcoal hover:text-cream">
                 <span className="font-display text-[44px] leading-none tracking-[-0.018em]">{location.city}</span>
                 <span className="text-[15px] leading-snug opacity-80">{location.street}, {location.postalCode} {location.city}<br />{location.hours}</span>
@@ -177,15 +178,15 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
 
       {step === 3 && treatment?.event && (
         <section key="time" className="step-in mt-8 md:mt-12">
-          <h1 className={`${title} mb-8`}>Wann passt es dir?</h1>
+          <h1 className={`${title} mb-8`}>{t.timeTitle}</h1>
           {booking === "taken" && <p role="alert" className="mb-5 rounded-2xl bg-white px-5 py-4 text-[15px] font-medium text-rose-deep">Diese Zeit wurde gerade vergeben. Bitte wähle eine andere.</p>}
-          <SlotPicker event={treatment.event} title={treatment.title} reloadKey={reloadKey} onPick={(iso) => { setSlot(iso); setBooking("idle"); }} />
+          <SlotPicker event={treatment.event} title={treatment.title} reloadKey={reloadKey} whatsapp={whatsapp} onPick={(iso) => { setSlot(iso); setBooking("idle"); }} />
         </section>
       )}
 
       {step === 4 && !needsRequest && slot && (
         <section key="details" className="step-in mx-auto mt-10 max-w-[720px] md:mt-14">
-          <h1 className={title}>Fast geschafft.</h1>
+          <h1 className={title}>{t.detailsTitle}</h1>
           <form onSubmit={submitBooking} className="mt-8 flex flex-col gap-4 rounded-[24px] bg-white p-5 md:p-8">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className={labelClass}>Dein Name<input className={fieldClass} name="name" required minLength={2} autoComplete="name" /></label>
@@ -198,7 +199,7 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
             <p className="text-[13px] leading-snug text-charcoal/75">Es gelten unsere <Link href="/datenschutz" className="underline underline-offset-2">Datenschutzhinweise</Link>.</p>
             {booking === "error" && (
               <p role="alert" className="text-[14px] text-rose-deep">
-                Das hat nicht geklappt. Schreib bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${treatment?.title} buchen.`)}>WhatsApp</a>.
+                Das hat nicht geklappt. Schreib bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${treatment?.title} buchen.`, whatsapp)}>WhatsApp</a>.
               </p>
             )}
           </form>
@@ -207,8 +208,8 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
 
       {step === 4 && needsRequest && (
         <section key="request" className="step-in mx-auto mt-10 max-w-[720px] md:mt-14">
-          <h1 className={title}>{place?.slug === "juelich" ? "In Jülich nach Vereinbarung." : "Dein Wunschtermin."}</h1>
-          <p className={lead}>Sag mir, wann es dir am besten passt. Ich melde mich mit einem festen Termin.</p>
+          <h1 className={title}>{place?.slug === "juelich" ? t.requestTitleJuelich : t.requestTitleOther}</h1>
+          <p className={lead}>{t.requestLead}</p>
           <form onSubmit={submitRequest} className="mt-8 flex flex-col gap-4 rounded-[24px] bg-white p-5 md:p-8">
             <fieldset>
               <legend className="mb-2 text-[14px] font-medium text-charcoal">Wann passt es dir?</legend>
@@ -229,7 +230,7 @@ export function BookingFlow({ event, initialTreatment, initialPlace }: Props) {
             <button type="submit" disabled={request.status === "sending"} className={pillClass("dark", "disabled:opacity-60")}>Termin anfragen</button>
             {request.status === "error" && (
               <p role="alert" className="text-[14px] text-rose-deep">
-                Das hat nicht geklappt. Schreib bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${treatment?.title} in ${place?.city}.`)}>WhatsApp</a>.
+                Das hat nicht geklappt. Schreib bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${treatment?.title} in ${place?.city}.`, whatsapp)}>WhatsApp</a>.
               </p>
             )}
           </form>

@@ -4,7 +4,7 @@ import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
 import { CtaBooking } from "@/components/ownui/CtaBooking"
 import type { Metadata } from "next"
-import { UeberMichView } from "./client"
+import { UeberMichView, type About } from "./client"
 
 export const metadata: Metadata = {
   title: "Über Sidorela Isa, Lash- und PMU-Artist",
@@ -25,7 +25,7 @@ export default async function UeberMichPage() {
     <>
       <Header />
       <main>
-        <UeberMichView about={about} />
+        <UeberMichView about={about as About} />
         <CtaBooking />
       </main>
       <Footer />

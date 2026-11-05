@@ -43,9 +43,9 @@ function TimeGroup({ label, slots, onPick }: { label: string; slots: string[]; o
   );
 }
 
-type Props = { event: string; title: string; onPick: (iso: string) => void; reloadKey?: number };
+type Props = { event: string; title: string; onPick: (iso: string) => void; reloadKey?: number; whatsapp?: string };
 
-export function SlotPicker({ event, title, onPick, reloadKey = 0 }: Props) {
+export function SlotPicker({ event, title, onPick, reloadKey = 0, whatsapp }: Props) {
   const [now] = useState(() => new Date());
   const [offset, setOffset] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
@@ -79,7 +79,7 @@ export function SlotPicker({ event, title, onPick, reloadKey = 0 }: Props) {
     return (
       <div role="alert" className="rounded-[24px] bg-white p-7 text-charcoal">
         <p className="text-[17px]">Die freien Zeiten konnten gerade nicht geladen werden.</p>
-        <a href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${title} buchen.`)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center font-medium underline underline-offset-4">Termin per WhatsApp anfragen</a>
+        <a href={whatsappUrl(`Hallo Sidorela, ich möchte einen Termin für ${title} buchen.`, whatsapp)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center font-medium underline underline-offset-4">Termin per WhatsApp anfragen</a>
       </div>
     );
   }

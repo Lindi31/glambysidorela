@@ -2,8 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { Pill } from "@/components/ownui/Pill"
 import { PageIntro, cardClass, pageShell, sectionTitle } from "@/components/ownui/PageIntro"
-import { BERATUNG_HREF, TREATMENTS } from "@/lib/offers"
-import { CATEGORY_LABELS } from "@/lib/site"
+import { getCategories, getTexts } from "@/lib/content"
+import { BERATUNG_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
 import { TreatmentLine } from "@/components/home/TreatmentLine"
 import type { ServiceItem } from "@/lib/content"
@@ -46,17 +46,18 @@ function ServiceCard({ service }: { service: Service }) {
   )
 }
 
-export function LeistungenGrid({ services }: { services: Service[] }) {
-  const groups = TREATMENTS.map((treatment) => ({
-    id: treatment.id,
-    title: CATEGORY_LABELS[treatment.id],
-    line: treatment.line,
-    items: services.filter((service) => service.category === treatment.id),
+export async function LeistungenGrid({ services }: { services: Service[] }) {
+  const [texts, categories] = await Promise.all([getTexts(), getCategories()])
+  const groups = categories.map((category) => ({
+    id: category.id,
+    title: category.label,
+    line: category.line,
+    items: services.filter((service) => service.category === category.id),
   })).filter((group) => group.items.length > 0)
 
   return (
     <div className="bg-cream pb-24 md:pb-32">
-      <PageIntro title="Lashes, Brows, PMU und Make-up." lead="Jede Behandlung stimmt Sidorela persönlich auf dich ab.">
+      <PageIntro title={texts.leistungen.title} lead={texts.leistungen.lead}>
         <div className="mt-7 flex flex-wrap gap-3">
           <Pill href="/beauty-check">Beauty-Check starten</Pill>
           <Pill href={BERATUNG_HREF} variant="outline">Kostenlose Beratung</Pill>
@@ -73,7 +74,7 @@ export function LeistungenGrid({ services }: { services: Service[] }) {
             </ul>
           </section>
         ))}
-        {groups.length === 0 && <p className="text-[17px] text-charcoal/75">Die Behandlungen werden gerade aktualisiert. Schreib mir gern direkt.</p>}
+        {groups.length === 0 && <p className="text-[17px] text-charcoal/75">{texts.leistungen.empty}</p>}
       </div>
     </div>
   )

@@ -13,10 +13,9 @@ function WhatsAppIcon() {
   );
 }
 
-const WHATSAPP = whatsappUrl("Hallo Sidorela, ich würde gerne einen Termin buchen.");
-
-export function WhatsAppFloat() {
+export function WhatsAppFloat({ whatsapp }: { whatsapp?: string }) {
   const pathname = usePathname();
+  const WHATSAPP = whatsappUrl("Hallo Sidorela, ich würde gerne einen Termin buchen.", whatsapp);
 
   // Im Studio verdeckt die Leiste sonst den Publish-Button.
   if (pathname.startsWith("/studio")) return null;

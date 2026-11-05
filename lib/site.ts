@@ -1,6 +1,7 @@
 // Zentrale Geschäftsdaten: überall gleich = wichtig für lokales SEO (Name, Adresse, Telefon).
 
-export const SITE_URL = "https://www.glambysidorela.de";
+// Nach dem Domain-Wechsel in Vercel SITE_URL=https://www.sidorelaisa.de setzen.
+export const SITE_URL = (process.env.SITE_URL ?? "https://www.glambysidorela.de").replace(/\/$/, "");
 
 export type SiteLocation = {
   slug: "bruchsal" | "juelich";
@@ -15,7 +16,7 @@ export type SiteLocation = {
   reviewUrl: string | null; // Google-Bewertungslink, sobald das Unternehmensprofil steht
 };
 
-const mapsUrl = (query: string) =>
+export const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
 export const SITE = {
@@ -31,7 +32,7 @@ export const SITE = {
   instagram: "https://www.instagram.com/sidorelaisa",
   instagramHandle: "@sidorelaisa",
   description:
-    "Lash-Extensions, Brows, Permanent Make-up, Make-up, Gesichtsbehandlungen und Schulungen von Sidorela Isa in Bruchsal und Jülich.",
+    "Sidorela Isa - Beauty Studio & Academy: Lash-Extensions, Brows, Permanent Make-up, Make-up, Gesichtsbehandlungen und Schulungen in Bruchsal und Jülich.",
 };
 
 // Aus Sidorelas Instagram-Profil, bitte aktuell halten.
@@ -68,8 +69,8 @@ export const LOCATIONS: SiteLocation[] = [
   },
 ];
 
-export const whatsappUrl = (text?: string) =>
-  `https://wa.me/${SITE.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+export const whatsappUrl = (text?: string, number: string = SITE.whatsapp) =>
+  `https://wa.me/${number}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 
 export const CATEGORY_LABELS: Record<string, string> = {
   lashes: "Lashes",

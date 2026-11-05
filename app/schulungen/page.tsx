@@ -6,7 +6,7 @@ import type { Metadata } from "next"
 import { SchulungenGrid } from "./client"
 
 export const metadata: Metadata = {
-  title: "Lash- und PMU-Schulungen in Bruchsal und Jülich",
+  title: "Academy: Lash- und PMU-Schulungen in Bruchsal und Jülich",
   alternates: { canonical: "/schulungen" },
   description:
     "Professionelle Lash-, Brow- und PMU-Schulungen von Sidorela Isa. Aus- und Weiterbildung für Einsteiger und Fortgeschrittene in Bruchsal und Jülich.",

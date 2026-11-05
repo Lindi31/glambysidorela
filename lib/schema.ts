@@ -6,7 +6,7 @@ const IMAGE = `${SITE_URL}/hero.png`;
 
 export const salonId = (location: SiteLocation) => `${SITE_URL}/standorte/${location.slug}#salon`;
 
-export function salonNode(location: SiteLocation) {
+export function salonNode(location: SiteLocation, site: { email: string; phone: string; instagram: string } = SITE) {
   return {
     "@type": "BeautySalon",
     "@id": salonId(location),
@@ -15,11 +15,11 @@ export function salonNode(location: SiteLocation) {
     parentOrganization: { "@id": ORGANIZATION_ID },
     description: `Lashes, Brows, Permanent Make-up, Make-up und Gesichtsbehandlungen in ${location.city}.`,
     image: IMAGE,
-    telephone: SITE.phone,
-    email: SITE.email,
+    telephone: site.phone,
+    email: site.email,
     priceRange: "€€",
     hasMap: location.mapsUrl,
-    sameAs: [SITE.instagram],
+    sameAs: [site.instagram],
     address: {
       "@type": "PostalAddress",
       streetAddress: location.street,
@@ -43,7 +43,7 @@ export function salonNode(location: SiteLocation) {
   };
 }
 
-export function siteGraph() {
+export function siteGraph(locations: SiteLocation[] = LOCATIONS, site: { email: string; phone: string; instagram: string } = SITE) {
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -53,10 +53,10 @@ export function siteGraph() {
         name: SITE.name,
         url: SITE_URL,
         image: IMAGE,
-        email: SITE.email,
-        telephone: SITE.phone,
+        email: site.email,
+        telephone: site.phone,
         founder: { "@type": "Person", name: SITE.owner },
-        sameAs: [SITE.instagram],
+        sameAs: [site.instagram],
       },
       {
         "@type": "WebSite",
@@ -66,7 +66,7 @@ export function siteGraph() {
         inLanguage: "de-DE",
         publisher: { "@id": ORGANIZATION_ID },
       },
-      ...LOCATIONS.map(salonNode),
+      ...locations.map((location) => salonNode(location, site)),
     ],
   };
 }

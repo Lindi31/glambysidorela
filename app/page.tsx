@@ -7,7 +7,8 @@ import { Credentials } from "@/components/ownui/Credentials";
 import { CtaBooking } from "@/components/ownui/CtaBooking";
 import { Footer } from "@/components/ownui/Footer";
 import { Header } from "@/components/ownui/Header";
-import { TestimonialsSlider } from "@/components/ownui/TestimonialsSlider";
+import { TestimonialsSlider, type Testimonial } from "@/components/ownui/TestimonialsSlider";
+import { getCategories, getSite, getTexts } from "@/lib/content";
 import { sanityFetch } from "@/sanity/lib/live";
 import { defineQuery } from "next-sanity";
 import type { Metadata } from "next";
@@ -26,18 +27,23 @@ const TESTIMONIALS_QUERY = defineQuery(`
 `);
 
 export default async function HomePage() {
-  const { data: testimonials } = await sanityFetch({ query: TESTIMONIALS_QUERY });
+  const [{ data: testimonials }, texts, site, categories] = await Promise.all([
+    sanityFetch({ query: TESTIMONIALS_QUERY }),
+    getTexts(),
+    getSite(),
+    getCategories(),
+  ]);
 
   return (
     <>
       <Header />
       <main>
-        <HeroStage />
-        <Statement />
+        <HeroStage kicker={texts.home.kicker} headline={texts.home.headline} image={site.heroImageUrl} />
+        <Statement text={texts.home.statement} />
         <section className="bg-cream px-5 pb-24 md:pb-36"><Credentials className="mx-auto max-w-[1000px]" /></section>
-        <TreatmentRail />
+        <TreatmentRail title={texts.home.railTitle} treatments={categories} />
         <Bento />
-        <TestimonialsSlider testimonials={testimonials} />
+        <TestimonialsSlider testimonials={testimonials as Testimonial[]} />
         <Locations />
         <CtaBooking />
       </main>

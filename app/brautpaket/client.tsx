@@ -4,16 +4,18 @@ import { useState } from "react";
 import { Check, Minus, Plus } from "lucide-react";
 import { fieldClass, labelClass, useRequest } from "@/components/ownui/useRequest";
 import { pillClass } from "@/components/ownui/Pill";
-import { BRIDE_OPTIONS } from "@/lib/offers";
-import { LOCATIONS, whatsappUrl } from "@/lib/site";
+import { whatsappUrl, type SiteLocation } from "@/lib/site";
+import type { PageTexts } from "@/lib/texts";
 
-export function BridalBuilder() {
+type BrideOption = { id: string; title: string; detail: string; price: number | null };
+
+export function BridalBuilder({ options, locations, whatsapp, t }: { options: BrideOption[]; locations: SiteLocation[]; whatsapp: string; t: PageTexts["brautpaket"] }) {
   const [picked, setPicked] = useState<string[]>(["probe", "makeup"]);
   const [companions, setCompanions] = useState(0);
   const { status, send } = useRequest();
 
   const toggle = (id: string) => setPicked((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
-  const chosen = BRIDE_OPTIONS.filter((option) => picked.includes(option.id));
+  const chosen = options.filter((option) => picked.includes(option.id));
   const total = chosen.reduce((sum, option) => sum + (option.price ?? 0), 0);
   const titles = chosen.map((option) => option.title);
 
@@ -37,13 +39,13 @@ export function BridalBuilder() {
     <section className="bg-cream px-5 pb-28 pt-24 md:pb-24 md:pt-32 lg:px-8">
       <div className="mx-auto max-w-[1136px]">
         <h1 className="max-w-[12em] text-balance font-display text-[clamp(44px,7vw,92px)] leading-[0.98] tracking-[-0.022em] text-charcoal">
-          Dein Brautpaket, ganz nach dir.
+          {t.title}
         </h1>
-        <p className="mt-5 max-w-[34em] text-[19px] leading-snug text-charcoal/75">Wähle aus, was du dir für deinen Tag wünschst. Den Rest besprechen wir persönlich.</p>
+        <p className="mt-5 max-w-[34em] text-[19px] leading-snug text-charcoal/75">{t.lead}</p>
 
         <div className="mt-10 grid items-start gap-8 md:mt-12 lg:grid-cols-[1.25fr_1fr] lg:gap-10">
           <div className="flex min-w-0 flex-col gap-2">
-            {BRIDE_OPTIONS.map((option) => {
+            {options.map((option) => {
               const on = picked.includes(option.id);
               return (
                 <button
@@ -70,8 +72,8 @@ export function BridalBuilder() {
 
             <div className="flex min-h-24 items-center justify-between gap-5 rounded-2xl bg-white px-6 py-4 text-charcoal">
               <span className="min-w-0">
-                <span className="block font-display text-[28px] leading-none tracking-[-0.012em]">Begleitung</span>
-                <span className="mt-2 block text-[15px] text-charcoal/75">Make-up für Trauzeugin, Mama oder Freundinnen.</span>
+                <span className="block font-display text-[28px] leading-none tracking-[-0.012em]">{t.companionTitle}</span>
+                <span className="mt-2 block text-[15px] text-charcoal/75">{t.companionText}</span>
               </span>
               <span className="flex flex-none items-center gap-2">
                 <button type="button" aria-label="Eine Person weniger" onClick={() => setCompanions((n) => Math.max(0, n - 1))} className="flex size-11 items-center justify-center rounded-full bg-charcoal/[0.07]"><Minus size={16} aria-hidden /></button>
@@ -84,8 +86,8 @@ export function BridalBuilder() {
           <div className="min-w-0 rounded-[24px] bg-white p-5 md:rounded-[28px] md:p-7 lg:sticky lg:top-20">
             {status === "done" ? (
               <div aria-live="polite">
-                <h2 className="font-display text-[40px] leading-[1.02] tracking-[-0.02em] text-charcoal">Glückwunsch zu deinem großen Tag.</h2>
-                <p className="mt-3 text-[17px] leading-snug text-charcoal/75">Deine Anfrage ist da. Sidorela meldet sich bei dir.</p>
+                <h2 className="font-display text-[40px] leading-[1.02] tracking-[-0.02em] text-charcoal">{t.doneTitle}</h2>
+                <p className="mt-3 text-[17px] leading-snug text-charcoal/75">{t.doneText}</p>
               </div>
             ) : (
               <form onSubmit={submit} className="flex flex-col gap-4">
@@ -98,8 +100,8 @@ export function BridalBuilder() {
                   <label className={labelClass}>Hochzeitsdatum<input className={fieldClass} type="date" name="date" /></label>
                   <label className={labelClass}>
                     Ort
-                    <select className={fieldClass} name="location" defaultValue={LOCATIONS[0].city}>
-                      {LOCATIONS.map((location) => <option key={location.slug}>{location.city}</option>)}
+                    <select className={fieldClass} name="location" defaultValue={locations[0]?.city}>
+                      {locations.map((location) => <option key={location.slug}>{location.city}</option>)}
                     </select>
                   </label>
                   <label className={labelClass}>Dein Name<input className={fieldClass} name="name" required minLength={2} autoComplete="name" /></label>
@@ -112,7 +114,7 @@ export function BridalBuilder() {
                 </button>
                 {status === "error" && (
                   <p role="alert" className="text-[14px] text-rose-deep">
-                    Das hat nicht geklappt. Schreib Sidorela bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für ein Brautpaket: ${titles.join(", ")}.`)}>WhatsApp</a>.
+                    Das hat nicht geklappt. Schreib Sidorela bitte per <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich interessiere mich für ein Brautpaket: ${titles.join(", ")}.`, whatsapp)}>WhatsApp</a>.
                   </p>
                 )}
               </form>

@@ -1,10 +1,10 @@
-import { client } from "@/sanity/lib/client"
+import { sanityFetch } from "@/sanity/lib/live"
 import { defineQuery } from "next-sanity"
 import { Header } from "@/components/ownui/Header"
 import { Footer } from "@/components/ownui/Footer"
-import { PortableText } from "@portabletext/react"
+import { PortableText, type PortableTextBlock } from "@portabletext/react"
 import type { Metadata } from "next"
-import { LOCATIONS, SITE } from "@/lib/site"
+import { getSite } from "@/lib/content"
 
 export const metadata: Metadata = {
   title: "Datenschutz",
@@ -52,8 +52,10 @@ const SECTIONS = [
 ]
 
 export default async function DatenschutzPage() {
-  const page = await client.fetch(DATENSCHUTZ_QUERY).catch(() => null)
-  const main = LOCATIONS[0]
+  const { data } = await sanityFetch({ query: DATENSCHUTZ_QUERY })
+  const page = data as { title?: string; content?: PortableTextBlock[] } | null
+  const site = await getSite()
+  const main = site.locations[0]
 
   return (
     <>
@@ -65,7 +67,7 @@ export default async function DatenschutzPage() {
           </h1>
 
           {page?.content ? (
-            <div className="rich-text">
+            <div className="legal-text space-y-8 text-[17px] leading-relaxed text-charcoal/80">
               <PortableText value={page.content} />
             </div>
           ) : (
@@ -73,11 +75,11 @@ export default async function DatenschutzPage() {
               <section>
                 <h2 className="mb-2 font-display text-[28px] leading-[1.1] text-charcoal">Verantwortlich</h2>
                 <address className="not-italic">
-                  {SITE.owner}, {SITE.name}
+                  {site.owner}, {site.name}
                   <br />
                   {main.street}, {main.postalCode} {main.city}
                   <br />
-                  <a className="underline underline-offset-4" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+                  <a className="underline underline-offset-4" href={`mailto:${site.email}`}>{site.email}</a>
                 </address>
               </section>
               {SECTIONS.map((section) => (

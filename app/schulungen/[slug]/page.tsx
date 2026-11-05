@@ -52,7 +52,7 @@ export default async function TrainingPage({ params }: { params: Promise<{ slug:
           training.seoDescription ?? `${training.title} bei Sidorela Isa in Bruchsal und Jülich.`,
         )}
       />
-      <JsonLd data={breadcrumbs([{ name: "Schulungen", path: "/schulungen" }, { name: training.title ?? "", path: `/schulungen/${slug}` }])} />
+      <JsonLd data={breadcrumbs([{ name: "Academy", path: "/schulungen" }, { name: training.title ?? "", path: `/schulungen/${slug}` }])} />
       <Header />
       <main>
         <TrainingDetail training={training} />

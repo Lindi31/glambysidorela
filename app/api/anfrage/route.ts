@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server"
 import { Resend } from "resend"
 import { z } from "zod"
+import { rejectRequest } from "@/lib/guard"
+import { SITE_URL } from "@/lib/site"
 import { escapeHtml } from "@/lib/mail"
 
 const contact = {
-  name: z.string().trim().min(2).max(80),
+  name: z.string().trim().min(2).max(80).regex(/^[^\r\n]*$/),
   email: z.string().trim().email().max(120),
   website: z.string().max(0).optional(), // Honeypot gegen Spam-Bots
 }
@@ -57,6 +59,9 @@ const SUBJECT = {
 const REMINDER_DAYS = 21
 
 export async function POST(req: Request) {
+  const blocked = rejectRequest(req, "anfrage")
+  if (blocked) return blocked
+
   const parsed = schema.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ error: "Bitte prüfe deine Eingaben." }, { status: 400 })
@@ -89,7 +94,7 @@ export async function POST(req: Request) {
         to: data.email,
         subject: `Zeit für dein ${data.treatment}-Update?`,
         scheduledAt: new Date(Date.now() + REMINDER_DAYS * 86_400_000).toISOString(),
-        html: `<p>Hallo ${escapeHtml(data.name)},</p><p>du wolltest an deinen nächsten Termin für ${escapeHtml(data.treatment)} erinnert werden.</p><p><a href="https://www.glambysidorela.de/termin">Jetzt Termin buchen</a></p><p>Liebe Grüße<br>Sidorela</p>`,
+        html: `<p>Hallo ${escapeHtml(data.name)},</p><p>du wolltest an deinen nächsten Termin für ${escapeHtml(data.treatment)} erinnert werden.</p><p><a href="${SITE_URL}/termin">Jetzt Termin buchen</a></p><p>Liebe Grüße<br>Sidorela</p>`,
       })
     }
 

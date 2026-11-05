@@ -3,6 +3,7 @@ import Link from "next/link"
 import { PageIntro, cardClass, pageShell } from "@/components/ownui/PageIntro"
 import { Pill } from "@/components/ownui/Pill"
 import { TrainingCalculator, TrainingWaitlist } from "@/components/ownui/TrainingExtras"
+import { getSite, getTexts } from "@/lib/content"
 import { ERSTGESPRAECH_HREF } from "@/lib/offers"
 import { urlFor } from "@/sanity/lib/image"
 
@@ -17,10 +18,11 @@ type Training = {
   upcomingDates?: unknown[] | null
 }
 
-export function SchulungenGrid({ trainings }: { trainings: Training[] }) {
+export async function SchulungenGrid({ trainings }: { trainings: Training[] }) {
+  const [{ schulungen: t }, site] = await Promise.all([getTexts(), getSite()])
   return (
     <div className="bg-cream pb-24 md:pb-32">
-      <PageIntro title="Lash- und PMU-Schulungen von der Expertin." lead="Praxisorientierte Schulungen in Bruchsal und Jülich, direkt von einer Lash Artist mit 6 Jahren Erfahrung. Mit persönlicher Anleitung und Starterset.">
+      <PageIntro title={t.title} lead={t.lead}>
         <div className="mt-7"><Pill href={ERSTGESPRAECH_HREF}>Kostenloses Erstgespräch</Pill></div>
       </PageIntro>
 
@@ -49,8 +51,8 @@ export function SchulungenGrid({ trainings }: { trainings: Training[] }) {
             ))}
           </ul>
         )}
-        <TrainingCalculator />
-        <TrainingWaitlist training="Schulungen allgemein" />
+        <TrainingCalculator fee={site.trainingFee} title={t.calculatorTitle} note={t.calculatorNote} />
+        <TrainingWaitlist training="Schulungen allgemein" title={t.waitlistTitle} lead={t.waitlistLead} doneTitle={t.waitlistDoneTitle} doneText={t.waitlistDoneText} />
       </div>
     </div>
   )

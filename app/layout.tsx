@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { SanityLive } from "@/sanity/lib/live";
 import { JsonLd } from "@/components/ownui/JsonLd";
 import { WhatsAppFloat } from "@/components/ownui/WhatsAppFloat";
+import { getSite } from "@/lib/content";
 import { siteGraph } from "@/lib/schema";
 import { SITE, SITE_URL } from "@/lib/site";
 
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.shortName} Beauty Studio & Academy`,
   },
   description: SITE.description,
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   applicationName: SITE.name,
   authors: [{ name: SITE.owner }],
   creator: SITE.owner,
@@ -56,15 +58,16 @@ export const viewport: Viewport = {
   themeColor: "#2C2826",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const site = await getSite();
   return (
     <html lang="de" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="antialiased">
-        <JsonLd data={siteGraph()} />
+        <JsonLd data={siteGraph(site.locations, site)} />
         <Providers>{children}</Providers>
-        <WhatsAppFloat />
+        <WhatsAppFloat whatsapp={site.whatsapp} />
         <SanityLive />
       </body>
     </html>

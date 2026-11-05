@@ -2,6 +2,7 @@ import { Footer } from "@/components/ownui/Footer";
 import { Header } from "@/components/ownui/Header";
 import { Metadata } from "next";
 import { BookingFlow } from "./client";
+import { getBookables, getSite, getTexts } from "@/lib/content";
 
 
 export const metadata: Metadata = {
@@ -17,12 +18,13 @@ type Props = {
 
 export default async function TerminPage({ searchParams }: Props) {
   const { event, behandlung, ort } = await searchParams;
+  const [bookables, site, texts] = await Promise.all([getBookables(), getSite(), getTexts()]);
 
   return (
     <>
       <Header />
       <main className="min-h-svh bg-cream pb-16 pt-24 md:pb-24 md:pt-32">
-        <BookingFlow event={event} initialTreatment={behandlung} initialPlace={ort} />
+        <BookingFlow event={event} initialTreatment={behandlung} initialPlace={ort} bookables={bookables} locations={site.locations} t={texts.termin} whatsapp={site.whatsapp} />
       </main>
       <Footer />
     </>

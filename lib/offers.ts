@@ -31,8 +31,6 @@ export const SHOP_EXAMPLES = [
   { id: "gel", title: "Brow Gel", detail: "Hält deine Brauen den ganzen Tag in Form.", price: 22, shape: "wand" },
 ] as const;
 
-export type QuizResult = { title: string; slug: string; from: number; why: string };
-
 export const QUIZ_QUESTIONS = [
   {
     key: "wish",
@@ -65,28 +63,15 @@ export const QUIZ_QUESTIONS = [
   },
 ] as const;
 
-const RESULTS = {
-  lifting: { title: "Lash Lifting", slug: "lash-lifting", from: 89, why: "Deine eigenen Wimpern, schön geschwungen. Dein Blick wirkt wach, ganz ohne künstliche Wimpern." },
-  extensions: { title: "Wimpernverlängerung", slug: "wimpernverlaengerung", from: 89, why: "Einzeln gesetzte Wimpern, abgestimmt auf deine Augenform. Morgens brauchst du keine Tusche mehr." },
-  volumen: { title: "Volumen-Lashes", slug: "volumen-lashes", from: 89, why: "Feine Fächer geben dir mehr Dichte und einen glamourösen Augenaufschlag." },
-  lamination: { title: "Brow Lamination", slug: "brow-lamination", from: 39, why: "Deine Härchen werden in Form gebracht. So wirken die Brauen voller und das Styling geht schneller." },
-  microblading: { title: "Microblading", slug: "microblading", from: 349, why: "Feine Härchenzeichnung für natürlich volle Brauen, die morgens schon sitzen." },
-  powder: { title: "Powder Brows", slug: "powder-brows", from: 349, why: "Weich schattierte Brauen mit einem Finish wie frisch gepudert." },
-  lip: { title: "Lip Blush", slug: "lip-blush", from: 349, why: "Ein zarter Farbschleier betont deine natürliche Lippenform." },
-  facial: { title: "Gesichtsbehandlung", slug: "gesichtsbehandlung", from: 69, why: "Reinigung und Pflege, abgestimmt auf deine Haut, für einen frischen Glow." },
-  event: { title: "Event-Make-up", slug: "event-make-up", from: 129, why: "Ein Look, der genau dann sitzt, wenn es darauf ankommt." },
-  braut: { title: "Braut-Make-up", slug: "braut-make-up", from: 129, why: "Dein Hochzeits-Look, abgestimmt auf dich, dein Kleid und deine Feier." },
-} satisfies Record<string, QuizResult>;
-
-export function quizResult(wish: string, dauer: string, stil: string): QuizResult {
-  if (wish === "anlass") return dauer === "tag" ? RESULTS.event : RESULTS.braut;
-  if (wish === "haut") return RESULTS.facial;
-  if (wish === "lippen") return dauer === "tag" ? RESULTS.event : RESULTS.lip;
+export function quizResult(wish: string, dauer: string, stil: string): string {
+  if (wish === "anlass") return dauer === "tag" ? "event-make-up" : "braut-make-up";
+  if (wish === "haut") return "gesichtsbehandlung";
+  if (wish === "lippen") return dauer === "tag" ? "event-make-up" : "lip-blush";
   if (wish === "brauen") {
-    if (dauer !== "lange") return RESULTS.lamination;
-    return stil === "stark" ? RESULTS.powder : RESULTS.microblading;
+    if (dauer !== "lange") return "brow-lamination";
+    return stil === "stark" ? "powder-brows" : "microblading";
   }
-  if (dauer === "tag") return RESULTS.event;
-  if (stil === "dezent") return RESULTS.lifting;
-  return stil === "stark" ? RESULTS.volumen : RESULTS.extensions;
+  if (dauer === "tag") return "event-make-up";
+  if (stil === "dezent") return "lash-lifting";
+  return stil === "stark" ? "volumen-lashes" : "wimpernverlaengerung";
 }

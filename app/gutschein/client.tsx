@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { fieldClass, labelClass, useRequest } from "@/components/ownui/useRequest";
 import { pillClass } from "@/components/ownui/Pill";
-import { GIFT_AMOUNTS } from "@/lib/offers";
-import { SITE, whatsappUrl } from "@/lib/site";
+import { whatsappUrl } from "@/lib/site";
+import type { PageTexts } from "@/lib/texts";
 import { Logo } from "@/components/ownui/Logo";
 
-export function GiftBuilder() {
+export function GiftBuilder({ amounts, email, whatsapp, t }: { amounts: number[]; email: string; whatsapp: string; t: PageTexts["gutschein"] }) {
   const [amount, setAmount] = useState(100);
   const [recipient, setRecipient] = useState("");
   const [note, setNote] = useState("");
@@ -48,7 +48,7 @@ export function GiftBuilder() {
     <section className="bg-cream px-5 pb-28 pt-24 md:pb-24 md:pt-32 lg:px-8">
       <div className="mx-auto max-w-[1136px]">
         <h1 className="text-balance text-center font-display text-[clamp(44px,7vw,92px)] leading-[0.98] tracking-[-0.022em] text-charcoal">
-          Schenke einen Moment nur für sie.
+          {t.title}
         </h1>
 
         <div className="mt-12 grid items-center gap-10 md:mt-16 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
@@ -64,22 +64,22 @@ export function GiftBuilder() {
               </div>
               <div>
                 <p className="font-display text-[clamp(26px,3.6vw,44px)] leading-[1.05]">{recipient ? `Für ${recipient}` : "Für dich"}</p>
-                <p className="mt-2 min-h-[1.4em] text-[clamp(13px,1.3vw,16px)] text-cream/75">{note || "Für deinen Wohlfühl-Moment"}</p>
+                <p className="mt-2 min-h-[1.4em] text-[clamp(13px,1.3vw,16px)] text-cream/75">{note || t.cardNote}</p>
               </div>
             </motion.div>
           </div>
 
           {status === "done" ? (
             <div aria-live="polite">
-              <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-charcoal">Danke, deine Bestellung ist da.</h2>
-              <p className="mt-3 text-[17px] leading-snug text-charcoal/75">Sidorela meldet sich per E-Mail mit den nächsten Schritten.</p>
+              <h2 className="font-display text-[44px] leading-[1.02] tracking-[-0.02em] text-charcoal">{t.doneTitle}</h2>
+              <p className="mt-3 text-[17px] leading-snug text-charcoal/75">{t.doneText}</p>
             </div>
           ) : (
             <form onSubmit={submit} className="flex flex-col gap-5">
               <fieldset>
                 <legend className="mb-2 text-[14px] font-medium text-charcoal">Wert</legend>
                 <div className="grid grid-cols-4 gap-2">
-                  {GIFT_AMOUNTS.map((value) => (
+                  {amounts.map((value) => (
                     <button
                       key={value}
                       type="button"
@@ -114,11 +114,11 @@ export function GiftBuilder() {
               <button type="submit" disabled={status === "sending"} className={pillClass("dark", "w-full disabled:opacity-60")}>
                 {status === "sending" ? "Wird gesendet …" : `Gutschein für ${amount} € bestellen`}
               </button>
-              <p className="text-[13px] leading-snug text-charcoal/75">Du bezahlst noch nichts. Sidorela schickt dir danach die Zahlungsinfos.</p>
+              <p className="text-[13px] leading-snug text-charcoal/75">{t.payNote}</p>
               {status === "error" && (
                 <p role="alert" className="text-[14px] text-rose-deep">
-                  Das hat nicht geklappt. Schreib bitte an {SITE.email} oder per{" "}
-                  <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Gutschein über ${amount} € bestellen.`)}>WhatsApp</a>.
+                  Das hat nicht geklappt. Schreib bitte an {email} oder per{" "}
+                  <a className="underline" href={whatsappUrl(`Hallo Sidorela, ich möchte einen Gutschein über ${amount} € bestellen.`, whatsapp)}>WhatsApp</a>.
                 </p>
               )}
             </form>

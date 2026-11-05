@@ -30,9 +30,11 @@ export default defineType({
     defineField({ name: 'priceFrom', title: 'Preis ab (€)', type: 'number' }),
     defineField({ name: 'image', title: 'Titelbild', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'gallery', title: 'Galerie', type: 'array', of: [{ type: 'image', options: { hotspot: true } }] }),
-    defineField({ name: 'calcomEventType', title: 'Cal.com Event Slug', type: 'string', description: 'z.B. "lash-lifting"' }),
+    defineField({ name: 'calcomEventType', title: 'Cal.com Event Slug', type: 'string', description: 'z.B. "lash-lifting". Leer lassen: Die Behandlung wird per Anfrage gebucht.' }),
     defineField({ name: 'seoTitle', title: 'SEO-Titel', type: 'string' }),
     defineField({ name: 'seoDescription', title: 'SEO-Beschreibung', type: 'text', rows: 2 }),
     defineField({ name: 'order', title: 'Reihenfolge', type: 'number' }),
+    defineField({ name: 'bookingOrder', title: 'Reihenfolge in der Terminbuchung', type: 'number' }),
+    defineField({ name: 'quizWhy', title: 'Text beim Beauty-Check', type: 'text', rows: 2 }),
   ],
 })
